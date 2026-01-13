@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Dashboard</title>
+  <link rel="stylesheet" href="admin.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+    * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Inter, sans-serif;
+}
+
+body {
+  background: #f5f6fa;
+}
+
+.admin-wrapper {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 240px;
+  background: #fff;
+  padding: 20px;
+  border-right: 1px solid #eee;
+}
+
+.logo {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 30px;
+}
+
+.menu {
+  list-style: none;
+}
+
+.menu li {
+  padding: 4px;
+  margin-bottom: 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #555;
+}
+
+.menu li.active,
+.menu li:hover {
+  background: #f1f2f6;
+  color: #6c5ce7;
+}
+
+/* Content */
+.content {
+  flex: 1;
+  padding: 24px;
+}
+
+/* Topbar */
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.topbar input {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+}
+
+.btn {
+  background: #6c5ce7;
+  color: #fff;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* Card */
+.card {
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+/* Table */
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 14px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+
+th {
+  color: #888;
+  font-size: 14px;
+}
+
+td {
+  font-size: 14px;
+}
+
+/* Status */
+.status {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.status.active {
+  background: #e9f9f1;
+  color: #2ecc71;
+}
+
+.status.scheduled {
+  background: #eef4ff;
+  color: #4c6ef5;
+}
+
+.status.draft {
+  background: #fff3e0;
+  color: #f39c12;
+}
+
+.menu-title {
+  font-size: 12px;
+  text-transform: uppercase;
+  color: #999;
+  margin: 18px 0 8px;
+}
+
+.has-submenu > span {
+  display: block;
+  padding: 12px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.submenu {
+  list-style: none;
+  padding-left: 15px;
+  display: none;
+}
+
+.submenu li {
+  padding: 2px 12px;
+  font-size: 14px;
+  color: #666;
+}
+
+.submenu li:hover {
+  color: #6c5ce7;
+}
+
+    </style>
+</head>
+<body>
+
+<div class="admin-wrapper">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+  <div class="logo">Ashion</div>
+
+  <ul class="menu">
+
+    <li class="active">
+      <i class="fa fa-grid"></i> Dashboard
+    </li>
+
+
+    <li class="has-submenu">
+      <span><i class="fa fa-box"></i> Products</span>
+      <ul class="submenu">
+        <li>All Products</li>
+        <li>Product Variants</li>
+        <li>Categories</li>
+        <li>Collections</li>
+        <li>Reviews</li>
+      </ul>
+    </li>
+
+    <li class="has-submenu">
+      <span><i class="fa fa-shopping-cart"></i> Orders</span>
+      <ul class="submenu">
+        <li>Orders</li>
+        <li>Order Status</li>
+        <li>Line Items</li>
+        <li>Billing Details</li>
+      </ul>
+    </li>
+
+    <li class="has-submenu">
+      <span><i class="fa fa-users"></i> Customers</span>
+      <ul class="submenu">
+        <li>Users</li>
+        <li>Cart</li>
+        <li>Wishlist</li>
+      </ul>
+    </li>
+
+    <li class="has-submenu">
+      <span><i class="fa fa-file-lines"></i> Content</span>
+      <ul class="submenu">
+        <li>Blogs</li>
+        <li>FAQ</li>
+        <li>Instagram Feed</li>
+      </ul>
+    </li>
+
+    <li class="menu-title">Support</li>
+    <li><i class="fa fa-phone"></i> Contact Info</li>
+
+    <li class="menu-title">Settings</li>
+    <li><i class="fa fa-gear"></i> Settings</li>
+
+  </ul>
+</aside>
+
+
+  <!-- Main Content -->
+  <main class="content">
+
+    <!-- Header -->
+    <header class="topbar">
+      <h2>Products</h2>
+      <div class="actions">
+        <input type="search" placeholder="Search">
+        <button class="btn">+ Add Product</button>
+      </div>
+    </header>
+
+    <!-- Table Card -->
+    <section class="card">
+      <table>
+        <thead>
+          <tr>
+            <th><input type="checkbox"></th>
+            <th>Product Name</th>
+            <th>Category</th>
+            <th>Price</th>
+            <th>Stock</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><input type="checkbox"></td>
+            <td>T-Shirt</td>
+            <td>Women Cloths</td>
+            <td>$79.80</td>
+            <td>79</td>
+            <td><span class="status scheduled">Scheduled</span></td>
+          </tr>
+          <tr>
+            <td><input type="checkbox"></td>
+            <td>Shirt</td>
+            <td>Man Cloths</td>
+            <td>$76.89</td>
+            <td>86</td>
+            <td><span class="status active">Active</span></td>
+          </tr>
+          <tr>
+            <td><input type="checkbox"></td>
+            <td>Pant</td>
+            <td>Kid Cloths</td>
+            <td>$86.65</td>
+            <td>74</td>
+            <td><span class="status draft">Draft</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+  </main>
+</div>
+
+<script>
+  document.querySelectorAll('.has-submenu > span').forEach(menu => {
+    menu.addEventListener('click', () => {
+      const submenu = menu.nextElementSibling;
+      submenu.style.display =
+        submenu.style.display === 'block' ? 'none' : 'block';
+    });
+  });
+</script>
+
+
+</body>
+</html>

@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="zxx">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Ashion Template">
+    <meta name="keywords" content="Ashion, unica, creative, html">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Ashion | Template</title>
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Cookie&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap"
+    rel="stylesheet">
+
+    <!-- Css Styles -->
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    <%= stylesheet_link_tag "application", media: "all" %>
+    <%= javascript_pack_tag "application" %>
+</head>
+
+<body>
+    <!-- Page Preloder -->
+    <div id="preloder">
+        <div class="loader"></div>
+    </div>
+
+    <!-- Offcanvas Menu Begin -->
+    <div class="offcanvas-menu-overlay"></div>
+    <div class="offcanvas-menu-wrapper">
+        <div class="offcanvas__close">+</div>
+        <ul class="offcanvas__widget">
+            <li><span class="icon_search search-switch"></span></li>
+            <li><a href="#"><span class="icon_heart_alt"></span>
+                <div class="tip">2</div>
+            </a></li>
+            <li><a href="#"><span class="icon_bag_alt"></span>
+                <div class="tip">2</div>
+            </a></li>
+        </ul>
+        <div class="offcanvas__logo">
+            <a href="./index.html"><img src="img/logo.png" alt=""></a>
+        </div>
+        <div id="mobile-menu-wrap"></div>
+        <div class="offcanvas__auth">
+            <a href="#">Login</a>
+            <a href="#">Register</a>
+        </div>
+    </div>
+    <!-- Offcanvas Menu End -->
+
+    <!-- Header Section Begin -->
+    <header class="header">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-xl-3 col-lg-2">
+                    <div class="header__logo">
+                        <a href="./index.html"><img src="img/logo.png" alt=""></a>
+                    </div>
+                </div>
+                <div class="col-xl-6 col-lg-7">
+                    <nav class="header__menu">
+                        <ul>
+                            <li class="active"><a href="./index.html">Home</a></li>
+                            <li><a href="#">Women’s</a></li>
+                            <li><a href="#">Men’s</a></li>
+                            <li><a href="./shop.html">Shop</a></li>
+                            <li><a href="#">Pages</a>
+                                <ul class="dropdown">
+                                    <li><a href="./product-details.html">Product Details</a></li>
+                                    <li><a href="./shop-cart.html">Shop Cart</a></li>
+                                    <li><a href="./checkout.html">Checkout</a></li>
+                                    <li><a href="./blog-details.html">Blog Details</a></li>
+                                </ul>
+                            </li>
+                            <li><a href="./blog.ht ml">Blog</a></li>
+                            <li><a href="./contact.html">Contact</a></li>
+                        </ul>
+                    </nav>
+                </div>
+                <div class="col-lg-3">
+                    <div class="header__right">
+                        <div class="header__right__auth">
+                            <a href="#">Login</a>
+                            <a href="#">Register</a>
+                        </div>
+                        <ul class="header__right__widget">
+                            <li><span class="icon_search search-switch"></span></li>
+                            <li><a href="#"><span class="icon_heart_alt"></span>
+                                <div class="tip">2</div>
+                            </a></li>
+                            <li><a href="#"><span class="icon_bag_alt"></span>
+                                <div class="tip">2</div>
+                            </a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="canvas__open">
+                <i class="fa fa-bars"></i>
+            </div>
+        </div>
+    </header>
+    <!-- Header Section End -->
+
+    <!-- Breadcrumb Begin -->
+    <div class="breadcrumb-option">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="breadcrumb__links">
+                        <a href="./index.html"><i class="fa fa-home"></i> Home</a>
+                        <span>Shopping cart</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Breadcrumb End -->
+
+    <!-- Shop Cart Section Begin -->
+    <section class="shop-cart spad">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="shop__cart__table">
+          <table>
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Total</th>
+                <th></th>
+              </tr>
+            </thead>
+
+           <tbody>
+  <% if @line_items.any? %>
+    <% @line_items.each do |item| %>
+      <tr>
+       <td class="cart__product__item">
+        <div class="cart__product__item__image">
+    <% if item.product_variant_combination&.product&.featured_image&.attached? %>
+      <%= image_tag item.product_variant_combination.product.featured_image, 
+                    alt: item.product_variant_combination.product.name, 
+                    width: 100, height: 100 %>
+    <% else %>
+      <%= image_tag "default-product.jpeg", alt: "No image available", width: 100, height: 100 %>
+    <% end %>
+  </div>
+        
+  <div class="cart__product__item__title">
+    <% if item.product_variant_combination && item.product_variant_combination.product %>
+      <h6><%= item.product_variant_combination.product.name %></h6>
+      <% options = item.product_variant_combination.product_variant_options.map(&:value) %>
+    <% if options.any? %>
+      (<%= options.join(" / ") %>)
+    <% end %>
+    <% else %>
+      <h6>Product not available</h6>
+    <% end %>
+    <div class="rating">
+      <i class="fa fa-star"></i>
+      <i class="fa fa-star"></i>
+      <i class="fa fa-star"></i>
+      <i class="fa fa-star"></i>
+      <i class="fa fa-star"></i>
+    </div>
+  </div>
+</td>
+        <td class="cart__price">
+          <%= number_to_currency(item.price) %>
+        </td>
+
+        <td class="cart__quantity">
+          <div class="pro-qty">
+            <input type="number" class="quantity-input" data-line-item-id="<%= item.id %>" data-price="<%= item.price %>" value="<%= item.quantity %>" min="1" />
+          </div>
+        </td>
+
+        <td class="cart__total">
+          <%= number_to_currency(item.quantity * item.price) %>
+        </td>
+
+        <td class="cart__close">
+          <button type="button" class="remove-cart-btn btn btn-danger btn-sm" data-line-item-id="<%= item.id %>" style="padding: 5px 10px; background-color: #d9534f; color: white; border: none; border-radius: 3px; cursor: pointer;">
+            Remove
+          </button>
+        </td>
+      </tr>
+    <% end %>
+  <% else %>
+    <tr>
+      <td colspan="5" class="text-center">
+        Your cart is empty
+      </td>
+    </tr>
+  <% end %>
+</tbody>
+
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Buttons -->
+    <div class="row">
+      <div class="col-lg-6">
+        <div class="cart__btn">
+          <%= link_to "Continue Shopping", root_path %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cart Total -->
+    <div class="row">
+      <div class="col-lg-4 offset-lg-8">
+        <div class="cart__total__procced">
+          <h6>Cart total</h6>
+          <ul>
+            <li>
+              Subtotal
+              <span id="cart-subtotal"><%= number_to_currency(@cart.total_amount) %></span>
+            </li>
+            <li>
+              Total
+              <span id="cart-total"><%= number_to_currency(@cart.total_amount) %></span>
+            </li>
+          </ul>
+
+          <%= link_to "Proceed to checkout",
+              new_order_path,
+              class: "primary-btn" %>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+    <!-- Shop Cart Section End -->
+
+    <!-- Instagram Begin -->
+    <div class="instagram">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-2 col-md-4 col-sm-4 p-0">
+                    <div class="instagram__item set-bg" data-setbg="img/instagram/insta-1.jpg">
+                        <div class="instagram__text">
+                            <i class="fa fa-instagram"></i>
+                            <a href="#">@ ashion_shop</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-4 col-sm-4 p-0">
+                    <div class="instagram__item set-bg" data-setbg="img/instagram/insta-2.jpg">
+                        <div class="instagram__text">
+                            <i class="fa fa-instagram"></i>
+                            <a href="#">@ ashion_shop</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-4 col-sm-4 p-0">
+                    <div class="instagram__item set-bg" data-setbg="img/instagram/insta-3.jpg">
+                        <div class="instagram__text">
+                            <i class="fa fa-instagram"></i>
+                            <a href="#">@ ashion_shop</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-4 col-sm-4 p-0">
+                    <div class="instagram__item set-bg" data-setbg="img/instagram/insta-4.jpg">
+                        <div class="instagram__text">
+                            <i class="fa fa-instagram"></i>
+                            <a href="#">@ ashion_shop</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-4 col-sm-4 p-0">
+                    <div class="instagram__item set-bg" data-setbg="img/instagram/insta-5.jpg">
+                        <div class="instagram__text">
+                            <i class="fa fa-instagram"></i>
+                            <a href="#">@ ashion_shop</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-4 col-sm-4 p-0">
+                    <div class="instagram__item set-bg" data-setbg="img/instagram/insta-6.jpg">
+                        <div class="instagram__text">
+                            <i class="fa fa-instagram"></i>
+                            <a href="#">@ ashion_shop</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Instagram End -->
+
+    <!-- Footer Section Begin -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 col-md-6 col-sm-7">
+                    <div class="footer__about">
+                        <div class="footer__logo">
+                            <a href="./index.html"><img src="img/logo.png" alt=""></a>
+                        </div>
+                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
+                        cilisis.</p>
+                        <div class="footer__payment">
+                            <a href="#"><img src="img/payment/payment-1.png" alt=""></a>
+                            <a href="#"><img src="img/payment/payment-2.png" alt=""></a>
+                            <a href="#"><img src="img/payment/payment-3.png" alt=""></a>
+                            <a href="#"><img src="img/payment/payment-4.png" alt=""></a>
+                            <a href="#"><img src="img/payment/payment-5.png" alt=""></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-3 col-sm-5">
+                    <div class="footer__widget">
+                        <h6>Quick links</h6>
+                        <ul>
+                            <li><a href="#">About</a></li>
+                            <li><a href="#">Blogs</a></li>
+                            <li><a href="#">Contact</a></li>
+                            <li><a href="#">FAQ</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-3 col-sm-4">
+                    <div class="footer__widget">
+                        <h6>Account</h6>
+                        <ul>
+                            <li><a href="#">My Account</a></li>
+                            <li><a href="#">Orders Tracking</a></li>
+                            <li><a href="#">Checkout</a></li>
+                            <li><a href="#">Wishlist</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-8 col-sm-8">
+                    <div class="footer__newslatter">
+                        <h6>NEWSLETTER</h6>
+                        <form action="#">
+                            <input type="text" placeholder="Email">
+                            <button type="submit" class="site-btn">Subscribe</button>
+                        </form>
+                        <div class="footer__social">
+                            <a href="#"><i class="fa fa-facebook"></i></a>
+                            <a href="#"><i class="fa fa-twitter"></i></a>
+                            <a href="#"><i class="fa fa-youtube-play"></i></a>
+                            <a href="#"><i class="fa fa-instagram"></i></a>
+                            <a href="#"><i class="fa fa-pinterest"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+                    <div class="footer__copyright__text">
+                        <p>Copyright &copy; <script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="fa fa-heart" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a></p>
+                    </div>
+                    <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!-- Footer Section End -->
+
+    <!-- Search Begin -->
+    <div class="search-model">
+        <div class="h-100 d-flex align-items-center justify-content-center">
+            <div class="search-close-switch">+</div>
+            <form class="search-model-form">
+                <input type="text" id="search-input" placeholder="Search here.....">
+            </form>
+        </div>
+    </div>
+    <!-- Search End -->
+
+    <!-- Cart Remove Script -->
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      const formatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
+
+      // Function to calculate and update cart totals
+      function updateCartTotals() {
+        let subtotal = 0;
+        const cartRows = document.querySelectorAll("tbody tr");
+
+        cartRows.forEach(row => {
+          const totalCell = row.querySelector(".cart__total");
+          if (totalCell && totalCell.textContent.trim() !== "" && !totalCell.textContent.includes("Your cart")) {
+            // Parse currency string and add to subtotal
+            const total = parseFloat(totalCell.textContent.replace(/[^\d.-]/g, ''));
+            if (!isNaN(total)) {
+              subtotal += total;
+            }
+          }
+        });
+
+        // Update subtotal and total
+        const subtotalElement = document.getElementById("cart-subtotal");
+        const totalElement = document.getElementById("cart-total");
+
+        if (subtotalElement) {
+          subtotalElement.textContent = formatter.format(subtotal);
+        }
+        if (totalElement) {
+          totalElement.textContent = formatter.format(subtotal);
+        }
+
+        console.log("Cart totals updated. Subtotal:", subtotal);
+      }
+
+      // Handle quantity change
+      const quantityInputs = document.querySelectorAll(".quantity-input");
+      console.log("Quantity inputs found:", quantityInputs.length);
+
+      quantityInputs.forEach(input => {
+        input.addEventListener("change", function(e) {
+          const lineItemId = this.getAttribute("data-line-item-id");
+          const price = parseFloat(this.getAttribute("data-price"));
+          const newQuantity = parseInt(this.value);
+          const row = this.closest("tr");
+          const totalCell = row.querySelector(".cart__total");
+
+          console.log("Updating quantity for line item:", lineItemId, "to:", newQuantity);
+
+          const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+
+          // Update the total price immediately
+          const newTotal = (price * newQuantity).toFixed(2);
+          const formatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
+          totalCell.textContent = formatter.format(newTotal);
+
+          // Recalculate cart subtotal and total
+          updateCartTotals();
+
+          // Send update to server
+          fetch(`/line_items/${lineItemId}`, {
+            method: "PATCH",
+            headers: {
+              "X-Requested-With": "XMLHttpRequest",
+              "Accept": "application/json",
+              "Content-Type": "application/json",
+              "X-CSRF-Token": csrfToken
+            },
+            body: JSON.stringify({
+              line_item: {
+                quantity: newQuantity
+              }
+            })
+          })
+          .then(response => {
+            console.log("Update response status:", response.status);
+            if (response.ok) {
+              console.log("Quantity updated successfully");
+            } else {
+              alert("Error updating quantity");
+              location.reload();
+            }
+          })
+          .catch(error => {
+            console.error("Error:", error);
+            alert("Error updating quantity");
+            location.reload();
+          });
+        });
+      });
+
+      // Handle remove button
+      const removeButtons = document.querySelectorAll(".remove-cart-btn");
+      console.log("Remove buttons found:", removeButtons.length);
+
+      removeButtons.forEach(button => {
+        button.addEventListener("click", function(e) {
+          e.preventDefault();
+
+          const lineItemId = this.getAttribute("data-line-item-id");
+          const row = this.closest("tr");
+
+          if (confirm("Remove this item from your cart?")) {
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+            console.log("Removing line item:", lineItemId);
+
+            fetch(`/line_items/${lineItemId}`, {
+              method: "DELETE",
+              headers: {
+                "X-Requested-With": "XMLHttpRequest",
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+                "X-CSRF-Token": csrfToken
+              }
+            })
+            .then(response => {
+              console.log("Response status:", response.status);
+              if (response.ok || response.status === 200 || response.status === 204) {
+                // Success - remove the item
+                row.style.opacity = "0";
+                row.style.transition = "opacity 0.3s ease-out";
+                setTimeout(() => {
+                  row.remove();
+                  
+                  // Check if table is empty
+                  const tbody = document.querySelector("tbody");
+                  const rows = tbody.querySelectorAll("tr");
+                  
+                  if (rows.length === 0) {
+                    location.reload();
+                  }
+                }, 300);
+              } else {
+                alert("Error removing item");
+              }
+            })
+            .catch(error => {
+              console.error("Error:", error);
+              alert("Error removing item");
+            });
+          }
+        });
+      });
+    });
+    </script>
+    <!-- Cart Remove Script End -->
+
+    <!-- Js Plugins -->
+    
+</body>
+
+</html>

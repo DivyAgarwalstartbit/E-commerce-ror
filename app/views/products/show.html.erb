@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="zxx">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Ashion Template">
+    <meta name="keywords" content="Ashion, unica, creative, html">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Ashion | Template</title>
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Cookie&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap"
+    rel="stylesheet">
+
+</head>
+
+<body>
+    <!-- Page Preloder -->
+    <div id="preloder">
+        <div class="loader"></div>
+    </div>
+
+    <!-- Offcanvas Menu Begin -->
+    <div class="offcanvas-menu-overlay"></div>
+    <div class="offcanvas-menu-wrapper">
+        <div class="offcanvas__close">+</div>
+        <ul class="offcanvas__widget">
+            <li><span class="icon_search search-switch"></span></li>
+            <li><a href="#"><span class="icon_heart_alt"></span>
+                <div class="tip">2</div>
+            </a></li>
+            <li><a href="#"><span class="icon_bag_alt"></span>
+                <div class="tip">2</div>
+            </a></li>
+        </ul>
+        <div class="offcanvas__logo">
+            <a href="./index.html"><img src="img/logo.png" alt=""></a>
+        </div>
+        <div id="mobile-menu-wrap"></div>
+        <div class="offcanvas__auth">
+            <a href="#">Login</a>
+            <a href="#">Register</a>
+        </div>
+    </div>
+    <!-- Offcanvas Menu End -->
+
+    <!-- Header Section Begin -->
+    <header class="header">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-xl-3 col-lg-2">
+                    <div class="header__logo">
+                        <a href="./index.html"><img src="img/logo.png" alt=""></a>
+                    </div>
+                </div>
+                <div class="col-xl-6 col-lg-7">
+                    <nav class="header__menu">
+                        <ul>
+                            <li><a href="./index.html">Home</a></li>
+                            <li><a href="#">Women’s</a></li>
+                            <li><a href="#">Men’s</a></li>
+                            <li class="active"><a href="./shop.html">Shop</a></li>
+                            <li><a href="#">Pages</a>
+                                <ul class="dropdown">
+                                    <li><a href="./product-details.html">Product Details</a></li>
+                                    <li><a href="./shop-cart.html">Shop Cart</a></li>
+                                    <li><a href="./checkout.html">Checkout</a></li>
+                                    <li><a href="./blog-details.html">Blog Details</a></li>
+                                </ul>
+                            </li>
+                            <li><a href="./blog.html">Blog</a></li>
+                            <li><a href="./contact.html">Contact</a></li>
+                        </ul>
+                    </nav>
+                </div>
+                <div class="col-lg-3">
+                    <div class="header__right">
+                        <div class="header__right__auth">
+                            <a href="#">Login</a>
+                            <a href="#">Register</a>
+                        </div>
+                        <ul class="header__right__widget">
+                            <li><span class="icon_search search-switch"></span></li>
+                            <li><a href="#"><span class="icon_heart_alt"></span>
+                                <div class="tip">2</div>
+                            </a></li>
+                            <li><a href="#"><span class="icon_bag_alt"></span>
+                                <div class="tip">2</div>
+                            </a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="canvas__open">
+                <i class="fa fa-bars"></i>
+            </div>
+        </div>
+    </header>
+    <!-- Header Section End -->
+
+    <!-- Breadcrumb Begin -->
+    <div class="breadcrumb-option">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="breadcrumb__links">
+                        <a href="./index.html"><i class="fa fa-home"></i> Home</a>
+                        <a href="#"><%= @product.category.name %></a>
+                        <span><%= @product.name %></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Breadcrumb End -->
+
+    <!-- Product Details Section Begin -->
+    <section class="product-details spad">
+  <div class="container">
+    <div class="row">
+
+      <!-- Product Images -->
+      <div class="col-lg-6">
+        <div class="product__details__pic">
+          <div class="product__details__pic__left product__thumb nice-scroll">
+            
+          </div>
+
+          <div class="product__details__slider__content">
+            <div class="product__details__pic__slider owl-carousel">
+              
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Product Info -->
+      <div class="col-lg-6">
+        <div class="product__details__text">
+          <h3><%= @product.name %> <span>Brand: <%= @product.brand %></span></h3>
+
+          <div class="rating">
+            <% 5.times do %>
+              <i class="fa fa-star"></i>
+            <% end %>
+            <span>( 138 reviews )</span>
+          </div>
+
+          <div class="product__details__price">
+            $ <%= @product.price %>
+            <% if @product.compare_price.present? && @product.compare_price > @product.price %>
+              <span>$ <%= @product.compare_price %></span>
+            <% end %>
+          </div>
+
+          <p><%= @product.short_description %></p>
+
+          <!-- Add to Cart Form -->
+          <div class="product__details__button">
+            <%= form_with url: line_items_path, method: :post, local: true, id: "add-to-cart-form" do |f| %>
+              <div class="quantity">
+                <span>Quantity:</span>
+                <div class="pro-qty">
+                  <%= f.number_field :quantity, value: 1, min: 1, class: "quantity-input" %>
+                </div>
+              </div>
+
+              <!-- Hidden field for variant -->
+              <%= f.hidden_field :product_variant_combination_id, id: "selected-variant-id" %>
+
+              <%= f.submit "Add to cart", class: "cart-btn" %>
+
+              <ul>
+                <li>
+                  <button type="button" id="wishlist-btn" class="icon_heart_alt wishlist-btn">
+                    <span class="icon_heart_alt"></span>
+                  </button>
+                </li>
+                <li><a href="#"><span class="icon_adjust-horiz"></span></a></li>
+              </ul>
+            <% end %>
+          </div>
+
+          <!-- Product Variants -->
+          <div class="product__details__widget">
+            <ul>
+              <li>
+                <span>Available color:</span>
+                <div class="color__checkbox">
+                  <% @variant_options.where(variant_type: "Color").each do |option| %>
+                    <label>
+                      <input type="radio" name="color" value="<%= option.id %>" class="variant-option" data-type="Color">
+                      <span class="checkmark <%= option.value.downcase %>-bg"></span>
+                    </label>
+                  <% end %>
+                </div>
+              </li>
+
+              <li>
+                <span>Available size:</span>
+                <div class="size__btn">
+                  <% @variant_options.where(variant_type: "Size").each do |option| %>
+                    <label>
+                      <input type="radio" name="size" value="<%= option.id %>" class="variant-option" data-type="Size">
+                      <%= option.value %>
+                    </label>
+                  <% end %>
+                </div>
+              </li>
+
+              <li>
+                <span>Promotions:</span>
+                <p>Free shipping</p>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="col-lg-12">
+        <div class="product__details__tab">
+          <ul class="nav nav-tabs" role="tablist">
+            <li class="nav-item">
+              <a class="nav-link active" data-toggle="tab" href="#tabs-1" role="tab">Description</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" data-toggle="tab" href="#tabs-2" role="tab">Specification</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" data-toggle="tab" href="#tabs-3" role="tab">Reviews ( 2 )</a>
+            </li>
+          </ul>
+          <div class="tab-content">
+            <div class="tab-pane active" id="tabs-1" role="tabpanel">
+              <h6>Description</h6>
+              <p><%= @product.description %></p>
+            </div>
+            <div class="tab-pane" id="tabs-2" role="tabpanel">
+              <h6>Specification</h6>
+              <p><%= @product.specification %></p>
+            </div>
+            <div class="tab-pane" id="tabs-3" role="tabpanel">
+              <h6>Reviews ( 2 )</h6>
+              <p>Sample reviews here...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Related Products -->
+      <div class="col-lg-12 text-center">
+        <div class="related__title">
+          <h5>RELATED PRODUCTS</h5>
+        </div>
+      </div>
+
+      <% @related_products.each do |product| %>
+        <div class="col-lg-4 col-md-6">
+          <div class="product__item <%= 'sale' if product.compare_price.present? && product.compare_price > product.price %>">
+            <div class="product__item__pic set-bg" data-setbg="<%= url_for(product.featured_image) if product.featured_image.attached? %>">
+              <% if product.compare_price.present? && product.compare_price > product.price %>
+                <div class="label">Sale</div>
+              <% elsif product.created_at >= 7.days.ago %>
+                <div class="label new">New</div>
+              <% elsif product.product_variants.sum(:in_stock) == 0 %>
+                <div class="label stockout stockblue">Out Of Stock</div>
+              <% end %>
+
+              <ul class="product__hover">
+                <li><a href="<%= url_for(product.featured_image) %>" class="image-popup"><span class="arrow_expand"></span></a></li>
+                <li><a href="#"><span class="icon_heart_alt"></span></a></li>
+                <li><a href="#"><span class="icon_bag_alt"></span></a></li>
+              </ul>
+            </div>
+
+            <div class="product__item__text">
+              <h6><a href="<%= product_path(product) %>"><%= product.name %></a></h6>
+              <div class="rating">
+                <% 5.times do %>
+                  <i class="fa fa-star"></i>
+                <% end %>
+              </div>
+              <div class="product__price">
+                $ <%= product.price %>
+                <% if product.compare_price.present? && product.compare_price > product.price %>
+                  <span>$ <%= product.compare_price %></span>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% end %>
+
+    </div>
+  </div>
+</section>
+    <!-- Product Details Section End -->
+
+    <!-- Instagram Begin -->
+    <div class="instagram">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-2 col-md-4 col-sm-4 p-0">
+                    <div class="instagram__item set-bg" data-setbg="img/instagram/insta-1.jpg">
+                        <div class="instagram__text">
+                            <i class="fa fa-instagram"></i>
+                            <a href="#">@ ashion_shop</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-4 col-sm-4 p-0">
+                    <div class="instagram__item set-bg" data-setbg="img/instagram/insta-2.jpg">
+                        <div class="instagram__text">
+                            <i class="fa fa-instagram"></i>
+                            <a href="#">@ ashion_shop</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-4 col-sm-4 p-0">
+                    <div class="instagram__item set-bg" data-setbg="img/instagram/insta-3.jpg">
+                        <div class="instagram__text">
+                            <i class="fa fa-instagram"></i>
+                            <a href="#">@ ashion_shop</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-4 col-sm-4 p-0">
+                    <div class="instagram__item set-bg" data-setbg="img/instagram/insta-4.jpg">
+                        <div class="instagram__text">
+                            <i class="fa fa-instagram"></i>
+                            <a href="#">@ ashion_shop</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-4 col-sm-4 p-0">
+                    <div class="instagram__item set-bg" data-setbg="img/instagram/insta-5.jpg">
+                        <div class="instagram__text">
+                            <i class="fa fa-instagram"></i>
+                            <a href="#">@ ashion_shop</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-4 col-sm-4 p-0">
+                    <div class="instagram__item set-bg" data-setbg="img/instagram/insta-6.jpg">
+                        <div class="instagram__text">
+                            <i class="fa fa-instagram"></i>
+                            <a href="#">@ ashion_shop</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Instagram End -->
+
+    <!-- Footer Section Begin -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 col-md-6 col-sm-7">
+                    <div class="footer__about">
+                        <div class="footer__logo">
+                            <a href="./index.html"><img src="img/logo.png" alt=""></a>
+                        </div>
+                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
+                        cilisis.</p>
+                        <div class="footer__payment">
+                            <a href="#"><img src="img/payment/payment-1.png" alt=""></a>
+                            <a href="#"><img src="img/payment/payment-2.png" alt=""></a>
+                            <a href="#"><img src="img/payment/payment-3.png" alt=""></a>
+                            <a href="#"><img src="img/payment/payment-4.png" alt=""></a>
+                            <a href="#"><img src="img/payment/payment-5.png" alt=""></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-3 col-sm-5">
+                    <div class="footer__widget">
+                        <h6>Quick links</h6>
+                        <ul>
+                            <li><a href="#">About</a></li>
+                            <li><a href="#">Blogs</a></li>
+                            <li><a href="#">Contact</a></li>
+                            <li><a href="#">FAQ</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-3 col-sm-4">
+                    <div class="footer__widget">
+                        <h6>Account</h6>
+                        <ul>
+                            <li><a href="#">My Account</a></li>
+                            <li><a href="#">Orders Tracking</a></li>
+                            <li><a href="#">Checkout</a></li>
+                            <li><a href="#">Wishlist</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-8 col-sm-8">
+                    <div class="footer__newslatter">
+                        <h6>NEWSLETTER</h6>
+                        <form action="#">
+                            <input type="text" placeholder="Email">
+                            <button type="submit" class="site-btn">Subscribe</button>
+                        </form>
+                        <div class="footer__social">
+                            <a href="#"><i class="fa fa-facebook"></i></a>
+                            <a href="#"><i class="fa fa-twitter"></i></a>
+                            <a href="#"><i class="fa fa-youtube-play"></i></a>
+                            <a href="#"><i class="fa fa-instagram"></i></a>
+                            <a href="#"><i class="fa fa-pinterest"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+                    <div class="footer__copyright__text">
+                        <p>Copyright &copy; <script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="fa fa-heart" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a></p>
+                    </div>
+                    <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!-- Footer Section End -->
+
+    <!-- Search Begin -->
+    <div class="search-model">
+        <div class="h-100 d-flex align-items-center justify-content-center">
+            <div class="search-close-switch">+</div>
+            <form class="search-model-form">
+                <input type="text" id="search-input" placeholder="Search here.....">
+            </form>
+        </div>
+    </div>
+    <!-- Search End -->
+
+   <script>
+  window.variantMapping = <%= @variant_combinations.each_with_object({}) do |comb, h| 
+    size = comb.product_variant_options.find_by(variant_type: "Size")&.id
+    color = comb.product_variant_options.find_by(variant_type: "Color")&.id
+    h["#{size}-#{color}"] = comb.id if size && color
+  end.to_json.html_safe %>;
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  const variantInputs = document.querySelectorAll(".variant-option");
+  const selectedVariantField = document.getElementById("selected-variant-id");
+
+  function updateSelectedVariant() {
+    const selectedSize = document.querySelector('input[name="size"]:checked')?.value;
+    const selectedColor = document.querySelector('input[name="color"]:checked')?.value;
+    if (selectedSize && selectedColor) {
+      const combinationId = window.variantMapping[selectedSize + "-" + selectedColor];
+      selectedVariantField.value = combinationId;
+    }
+  }
+
+  variantInputs.forEach(input => {
+    input.addEventListener("change", updateSelectedVariant);
+  });
+});
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  const wishlistBtn = document.getElementById("wishlist-btn");
+  const productId = <%= @product.id %>;
+
+  // Check if product is already in wishlist
+  function checkWishlistStatus() {
+    fetch(`/wishlists/check?product_id=${productId}`, {
+      method: "GET",
+      headers: {
+        "X-Requested-With": "XMLHttpRequest",
+        "Accept": "application/json"
+      }
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.in_wishlist) {
+        wishlistBtn.classList.add("active");
+      } else {
+        wishlistBtn.classList.remove("active");
+      }
+    })
+    .catch(error => console.error("Error checking wishlist:", error));
+  }
+
+  // Check status on load
+  checkWishlistStatus();
+
+  // Handle wishlist button click
+  wishlistBtn.addEventListener("click", function(e) {
+    e.preventDefault();
+
+    const selectedVariantId = document.getElementById("selected-variant-id").value;
+    
+    if (!selectedVariantId) {
+      alert("Please select a variant before adding to wishlist");
+      return;
+    }
+
+    const action = wishlistBtn.classList.contains("active") ? "remove" : "add";
+    const url = action === "add" ? "/wishlists" : `/wishlists/${productId}`;
+    const method = action === "add" ? "POST" : "DELETE";
+
+    fetch(url, {
+      method: method,
+      headers: {
+        "X-Requested-With": "XMLHttpRequest",
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+        "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]').content
+      },
+      body: JSON.stringify({
+        product_variant_combination_id: selectedVariantId
+      })
+    })
+    .then(response => {
+      console.log("Response status:", response.status);
+      if (response.ok || response.status === 204 || response.status === 200) {
+        return response.status === 204 ? { success: true } : response.json().catch(() => ({ success: true }));
+      }
+      return response.json().then(data => Promise.reject(data));
+    })
+    .then(data => {
+      console.log("Response data:", data);
+      wishlistBtn.classList.toggle("active");
+      const message = action === "add" 
+        ? "Added to wishlist! Would you like to view your wishlist?" 
+        : "Removed from wishlist!";
+      
+      if (action === "add") {
+        if (confirm(message)) {
+          window.location.href = "/wishlists";
+        }
+      } else {
+        alert(message);
+      }
+    })
+    .catch(error => {
+      console.error("Error:", error);
+      alert(error.message || "Error updating wishlist");
+    });
+  });
+});
+</script>
+
+</body>
+
+</html>
