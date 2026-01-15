@@ -12,18 +12,14 @@
 
 ActiveRecord::Schema.define(version: 2026_01_12_070321) do
 
-  create_table "Collections", force: :cascade do |t|
-    t.string "name"
-    t.text "description"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-  end
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
-    t.integer "record_id", null: false
-    t.integer "blob_id", null: false
+    t.bigint "record_id", null: false
+    t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
     t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
     t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
@@ -42,13 +38,13 @@ ActiveRecord::Schema.define(version: 2026_01_12_070321) do
   end
 
   create_table "active_storage_variant_records", force: :cascade do |t|
-    t.integer "blob_id", null: false
+    t.bigint "blob_id", null: false
     t.string "variation_digest", null: false
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
   create_table "billing_details", force: :cascade do |t|
-    t.integer "order_id", null: false
+    t.bigint "order_id", null: false
     t.string "first_name"
     t.string "last_name"
     t.string "country"
@@ -65,7 +61,7 @@ ActiveRecord::Schema.define(version: 2026_01_12_070321) do
   end
 
   create_table "carts", force: :cascade do |t|
-    t.integer "user_id"
+    t.bigint "user_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["user_id"], name: "index_carts_on_user_id"
@@ -76,23 +72,30 @@ ActiveRecord::Schema.define(version: 2026_01_12_070321) do
     t.string "gender"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.integer "collection_id"
+    t.bigint "collection_id"
     t.index ["collection_id"], name: "index_categories_on_collection_id"
   end
 
   create_table "collection_products", force: :cascade do |t|
-    t.integer "product_id", null: false
-    t.integer "collection_id", null: false
+    t.bigint "product_id", null: false
+    t.bigint "collection_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["collection_id"], name: "index_collection_products_on_collection_id"
     t.index ["product_id"], name: "index_collection_products_on_product_id"
   end
 
+  create_table "collections", force: :cascade do |t|
+    t.string "name"
+    t.text "description"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
   create_table "line_items", force: :cascade do |t|
-    t.integer "cart_id", null: false
+    t.bigint "cart_id", null: false
     t.integer "order_id"
-    t.integer "product_variant_combination_id", null: false
+    t.bigint "product_variant_combination_id", null: false
     t.integer "quantity", default: 1
     t.decimal "price", precision: 10, scale: 2
     t.datetime "created_at", precision: 6, null: false
@@ -103,26 +106,24 @@ ActiveRecord::Schema.define(version: 2026_01_12_070321) do
   end
 
   create_table "orders", force: :cascade do |t|
-    t.integer "user_id", null: false
+    t.bigint "user_id", null: false
     t.decimal "total_amount"
     t.string "status"
-    t.integer "billing_details_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["billing_details_id"], name: "index_orders_on_billing_details_id"
     t.index ["user_id"], name: "index_orders_on_user_id"
   end
 
   create_table "product_variant_combination_options", force: :cascade do |t|
-    t.integer "product_variant_combination_id", null: false
-    t.integer "product_variant_option_id", null: false
+    t.bigint "product_variant_combination_id", null: false
+    t.bigint "product_variant_option_id", null: false
     t.index ["product_variant_combination_id", "product_variant_option_id"], name: "idx_pvco_unique", unique: true
     t.index ["product_variant_combination_id"], name: "idx_pvco_combination"
     t.index ["product_variant_option_id"], name: "idx_pvco_option"
   end
 
   create_table "product_variant_combinations", force: :cascade do |t|
-    t.integer "product_id", null: false
+    t.bigint "product_id", null: false
     t.string "sku", null: false
     t.integer "stock", default: 0, null: false
     t.decimal "price", precision: 10, scale: 2
@@ -133,12 +134,12 @@ ActiveRecord::Schema.define(version: 2026_01_12_070321) do
   end
 
   create_table "product_variant_options", force: :cascade do |t|
-    t.integer "product_id", null: false
+    t.bigint "product_id", null: false
     t.string "variant_type", null: false
     t.string "value", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["product_id", "variant_type", "value"], name: "variant_options", unique: true
+    t.index ["product_id", "variant_type", "value"], name: "index_unique_variant_options", unique: true
     t.index ["product_id"], name: "index_product_variant_options_on_product_id"
   end
 
@@ -150,7 +151,7 @@ ActiveRecord::Schema.define(version: 2026_01_12_070321) do
     t.decimal "price", precision: 10, scale: 2, null: false
     t.decimal "compare_price", precision: 10, scale: 2
     t.text "specification"
-    t.integer "category_id"
+    t.bigint "category_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["category_id"], name: "index_products_on_category_id"
@@ -168,9 +169,9 @@ ActiveRecord::Schema.define(version: 2026_01_12_070321) do
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
-  
+
   create_table "wishlists", force: :cascade do |t|
-    t.integer "user_id"
+    t.bigint "user_id"
     t.string "name"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -188,8 +189,6 @@ ActiveRecord::Schema.define(version: 2026_01_12_070321) do
   add_foreign_key "collection_products", "products"
   add_foreign_key "line_items", "carts"
   add_foreign_key "line_items", "orders"
-  add_foreign_key "line_items", "product_variant_combinations"
-  add_foreign_key "orders", "billing_details", column: "billing_details_id"
   add_foreign_key "orders", "users"
   add_foreign_key "product_variant_combination_options", "product_variant_combinations"
   add_foreign_key "product_variant_combination_options", "product_variant_options"

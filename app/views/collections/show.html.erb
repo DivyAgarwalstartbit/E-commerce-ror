@@ -119,108 +119,133 @@
     <!-- Breadcrumb End -->
 
     <!-- Shop Section Begin -->
-   <section class="shop spad">
+  <section class="shop spad">
   <div class="container">
     <div class="row">
-      <!-- Sidebar -->
+
+      <!-- SIDEBAR -->
       <div class="col-lg-3 col-md-3">
         <div class="shop__sidebar">
 
-          <!-- Categories Accordion -->
-          <div class="sidebar__categories">
-            <div class="section-title">
-              <h4>Categories</h4>
-            </div>
-            <div class="categories__accordion">
-            <div class="accordion" id="accordionExample">
-  <% @collections.each_with_index do |collection, idx| %>
-    <div class="card">
-      <div class="card-heading <%= 'active' if idx == 0 %>">
-        <a data-toggle="collapse" data-target="#collapse_<%= collection.name.parameterize %>"><%= collection.name %></a>
-      </div>
-      <div id="collapse_<%= collection.name.parameterize %>" class="collapse <%= 'show' if idx == 0 %>" data-parent="#accordionExample">
-        <div class="card-body">
-          <ul>
-            <% collection.categories.each do |category| %>
-              <% new_params = params.permit(:min_price, :max_price, size: [], color: []).to_h.merge(category_id: category.id) %>
-              <li class="<%= 'selected' if params[:category_id].to_i == category.id %>">
-                <%= link_to category.name, collection_path(collection, new_params) %>
-              </li>
-            <% end %>
-          </ul>
-        </div>
-      </div>
-    </div>
-  <% end %>
-</div>
+          <%= search_form_for @q, url: collection_path(@collection), method: :get do |f| %>
 
+            <!-- CATEGORIES -->
+            <div class="sidebar__categories">
+              <div class="section-title">
+                <h4>Categories</h4>
+              </div>
 
+              <div class="categories__accordion">
+                <div class="accordion" id="accordionExample">
+                  <% @collections.each_with_index do |collection, idx| %>
+                    <div class="card">
+                      <div class="card-heading <%= 'active' if idx.zero? %>">
+                        <a data-toggle="collapse"
+                           data-target="#collapse_<%= collection.name.parameterize %>">
+                          <%= collection.name %>
+                        </a>
+                      </div>
 
+                      <div id="collapse_<%= collection.name.parameterize %>"
+                           class="collapse <%= 'show' if idx.zero? %>"
+                           data-parent="#accordionExample">
+                        <div class="card-body">
+                          <ul>
+                            <% collection.categories.each do |category| %>
+                             <li class="<%= 'selected' if params.dig(:q, :category_id_eq).to_i == category.id %>">
+  <%= link_to category.name,
+      collection_path(
+        @collection,
+        q: params.fetch(:q, ActionController::Parameters.new)
+                 .permit!
+                 .to_h
+                 .merge(category_id_eq: category.id)
+      ) %>
+</li>
 
-            </div>
-          </div>
-
-          <!-- Shop by Price -->
-          <div class="sidebar__filter">
-            <div class="section-title">
-              <h4>Shop by price</h4>
-            </div>
-            <div class="filter-range-wrap">
-              <div class="price-range ui-slider ui-corner-all ui-slider-horizontal ui-widget ui-widget-content"
-                   data-min="0" data-max="500"></div>
-              <div class="range-slider">
-                <div class="price-input">
-                  <p>Price:</p>
-                  <input type="text" id="minamount" name="min_price" class="price-filter" value="<%= params[:min_price] %>">
-                  <input type="text" id="maxamount" name="max_price" class="price-filter" value="<%= params[:max_price] %>">
+                            <% end %>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                  <% end %>
                 </div>
               </div>
             </div>
-          </div>
 
-          <!-- Shop by Size -->
-          <div class="sidebar__sizes">
-            <div class="section-title">
-              <h4>Shop by size</h4>
-            </div>
-            <div class="size__list">
-              <% ["XXS","XS","S","M","L","XL"].each do |size| %>
-                <label for="<%= size.downcase %>">
-                  <input type="checkbox" class="size-filter" id="<%= size.downcase %>" value="<%= size %>" <%= "checked" if Array(params[:size]).include?(size) %> >
-                  <span class="checkmark"></span>
-                  <%= size %>
-                </label>
-              <% end %>
-            </div>
-          </div>
+            <!-- PRICE FILTER -->
+            <div class="sidebar__filter">
+              <div class="section-title">
+                <h4>Shop by price</h4>
+              </div>
 
-          <!-- Shop by Color -->
-          <div class="sidebar__color">
-            <div class="section-title">
-              <h4>Shop by color</h4>
-            </div>
-            <div class="size__list color__list">
-              <% ["Black","White","Red","Grey","Blue","Beige","Green","Yellow"].each do |color| %>
-                <label for="<%= color.downcase %>">
-                  <input type="checkbox" class="color-filter" id="<%= color.downcase %>" value="<%= color %>" <%= "checked" if Array(params[:color]).include?(color) %> >
-                  <span class="checkmark"></span>
-                  <%= color %>
-                </label>
-              <% end %>
-            </div>
-          </div>
+              <div class="filter-range-wrap">
+                <div class="range-slider">
+                  <div class="price-input">
+                    <p>Price:</p>
+                    <%= f.text_field :price_gteq,
+                        placeholder: "Min",
+                        class: "price-filter",
+                        value: params.dig(:q, :price_gteq) %>
 
+                    <%= f.text_field :price_lteq,
+                        placeholder: "Max",
+                        class: "price-filter",
+                        value: params.dig(:q, :price_lteq) %>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- SIZE FILTER -->
+            <div class="sidebar__sizes">
+              <div class="section-title">
+                <h4>Shop by size</h4>
+              </div>
+
+              <div class="size__list">
+                <% ["XXS","XS","S","M","L","XL"].each do |size| %>
+  <label>
+    <%= check_box_tag "q[product_variant_combinations_size_in][]", size, Array(params.dig(:q, :product_variant_combinations_size_in)).include?(size), class: "size-filter" %>
+    <span class="checkmark"></span>
+    <%= size %>
+  </label>
+<% end %>
+              </div>
+            </div>
+
+            <!-- COLOR FILTER -->
+            <div class="sidebar__color">
+              <div class="section-title">
+                <h4>Shop by color</h4>
+              </div>
+
+              <div class="size__list color__list">
+               <% ["Black","White","Red","Grey","Blue","Beige","Green","Yellow"].each do |color| %>
+  <label>
+    <%= check_box_tag "q[product_variant_combinations_color_in][]", color, Array(params.dig(:q, :product_variant_combinations_color_in)).include?(color), class: "color-filter" %>
+    <span class="checkmark"></span>
+    <%= color %>
+  </label>
+<% end %>
+
+              </div>
+            </div>
+
+          <% end %>
         </div>
       </div>
 
-      <!-- Products Grid -->
+      <!-- PRODUCTS GRID -->
       <div class="col-lg-9 col-md-9">
         <div class="row" id="products-grid">
           <% @products.each do |product| %>
             <div class="col-lg-4 col-md-6 product-item">
               <div class="product__item <%= 'sale' if product.compare_price.present? && product.compare_price > product.price %>">
-                
-                <div class="product__item__pic set-bg" data-setbg="<%= url_for(product.featured_image) if product.featured_image.attached? %>">
+
+                <div class="product__item__pic set-bg"
+                     data-setbg="<%= url_for(product.featured_image) if product.featured_image.attached? %>">
+
                   <% if product.compare_price.present? && product.compare_price > product.price %>
                     <div class="label">Sale</div>
                   <% elsif product.created_at >= 7.days.ago %>
@@ -229,7 +254,11 @@
 
                   <ul class="product__hover">
                     <% if product.featured_image.attached? %>
-                      <li><a href="<%= url_for(product.featured_image) %>" class="image-popup"><span class="arrow_expand"></span></a></li>
+                      <li>
+                        <a href="<%= url_for(product.featured_image) %>" class="image-popup">
+                          <span class="arrow_expand"></span>
+                        </a>
+                      </li>
                     <% end %>
                     <li><a href="#"><span class="icon_heart_alt"></span></a></li>
                     <li><a href="#"><span class="icon_bag_alt"></span></a></li>
@@ -237,12 +266,14 @@
                 </div>
 
                 <div class="product__item__text">
-                  <h6><a href="<%= product_path(product) %>"><%= product.name %></a></h6>
+                  <h6>
+                    <%= link_to product.name, product_path(product) %>
+                  </h6>
+
                   <div class="rating">
-                    <% 5.times do %>
-                      <i class="fa fa-star"></i>
-                    <% end %>
+                    <% 5.times { %><i class="fa fa-star"></i><% } %>
                   </div>
+
                   <div class="product__price">
                     $ <%= number_with_precision(product.price, precision: 2) %>
                     <% if product.compare_price.present? && product.compare_price > product.price %>
@@ -255,21 +286,12 @@
             </div>
           <% end %>
         </div>
-
-        <!-- Pagination Placeholder -->
-        <div class="col-lg-12 text-center">
-          <div class="pagination__option">
-            <a href="#">1</a>
-            <a href="#">2</a>
-            <a href="#">3</a>
-            <a href="#"><i class="fa fa-angle-right"></i></a>
-          </div>
-        </div>
-
       </div>
+
     </div>
   </div>
 </section>
+
 
     <!-- Shop Section End -->
 
@@ -415,89 +437,12 @@
 
     <!-- Collection Filter Script -->
     <script>
-    document.addEventListener("DOMContentLoaded", function() {
-      const collectionId = <%= @collection.id %>;
-      let filterTimeout;
-
-      function applyFilters() {
-        clearTimeout(filterTimeout);
-        filterTimeout = setTimeout(() => {
-          // Get all filter values
-          const sizes = Array.from(document.querySelectorAll('.size-filter:checked')).map(el => el.value);
-          const colors = Array.from(document.querySelectorAll('.color-filter:checked')).map(el => el.value);
-          const minPrice = document.getElementById('minamount').value;
-          const maxPrice = document.getElementById('maxamount').value;
-
-          // Build query params
-          const params = new URLSearchParams();
-          sizes.forEach(size => params.append('size[]', size));
-          colors.forEach(color => params.append('color[]', color));
-          if (minPrice) params.append('min_price', minPrice);
-          if (maxPrice) params.append('max_price', maxPrice);
-
-          console.log("Applying filters:", {sizes, colors, minPrice, maxPrice});
-
-          // Fetch filtered products
-          fetch(`/collections/${collectionId}?${params.toString()}&format=json`, {
-            method: "GET",
-            headers: {
-              "X-Requested-With": "XMLHttpRequest",
-              "Accept": "application/json"
-            }
-          })
-          .then(response => response.json())
-          .then(data => {
-            updateProductsGrid(data.products);
-          })
-          .catch(error => {
-            console.error("Error:", error);
-          });
-        }, 300);
-      }
-
-      function updateProductsGrid(products) {
-        const grid = document.getElementById('products-grid');
-        
-        if (products.length === 0) {
-          grid.innerHTML = '<div class="col-12 text-center"><p>No products found matching your filters.</p></div>';
-          return;
-        }
-
-        grid.innerHTML = products.map(product => `
-          <div class="col-lg-4 col-md-6 product-item">
-            <div class="product__item ${product.compare_price && product.compare_price > product.price ? 'sale' : ''}">
-              <div class="product__item__pic set-bg" data-setbg="${product.featured_image_url || ''}">
-                ${product.is_sale ? '<div class="label">Sale</div>' : ''}
-                ${product.is_new ? '<div class="label new">New</div>' : ''}
-                <ul class="product__hover">
-                  <li><a href="${product.featured_image_url || ''}" class="image-popup"><span class="arrow_expand"></span></a></li>
-                  <li><a href="#"><span class="icon_heart_alt"></span></a></li>
-                  <li><a href="#"><span class="icon_bag_alt"></span></a></li>
-                </ul>
-              </div>
-              <div class="product__item__text">
-                <h6><a href="/products/${product.id}">${product.name}</a></h6>
-                <div class="rating">
-                  <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i>
-                </div>
-                <div class="product__price">
-                  $ ${parseFloat(product.price).toFixed(2)}
-                  ${product.compare_price ? `<span>$ ${parseFloat(product.compare_price).toFixed(2)}</span>` : ''}
-                </div>
-              </div>
-            </div>
-          </div>
-        `).join('');
-      }
-
-      // Add event listeners to all filters
-      document.querySelectorAll('.size-filter, .color-filter, .price-filter').forEach(filter => {
-        filter.addEventListener('change', applyFilters);
-        filter.addEventListener('keyup', applyFilters);
-      });
-
-      console.log("Collection filters initialized");
-    });
+   
+  document.querySelectorAll(
+    '.size-filter, .color-filter, .price-filter'
+  ).forEach(el => {
+    el.addEventListener('change', () => el.form.submit())
+  })
     </script>
     <!-- Collection Filter Script End -->
 

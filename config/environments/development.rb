@@ -6,6 +6,26 @@ Rails.application.configure do
   # In the development environment your application's code is reloaded any time
   # it changes. This slows down response time but is perfect for development
   # since you don't have to restart the web server when you make code changes.
+
+
+
+config.action_mailer.delivery_method = :smtp
+  config.action_mailer.perform_deliveries = true
+  config.action_mailer.raise_delivery_errors = true
+  config.action_mailer.default_options = { from: ENV['OUTLOOK_SMTP_USERNAME'] }
+
+  config.action_mailer.smtp_settings = {
+    address:              ENV['OUTLOOK_SMTP_ADDRESS'],
+    port:                 ENV['OUTLOOK_SMTP_PORT'],
+    domain:               ENV['OUTLOOK_SMTP_DOMAIN'],
+    user_name:            ENV['OUTLOOK_SMTP_USERNAME'],
+    password:             ENV['OUTLOOK_SMTP_PASSWORD'],
+    authentication:       ENV['OUTLOOK_SMTP_AUTHENTICATION'].to_sym,
+    enable_starttls_auto: ENV['OUTLOOK_SMTP_ENABLE_STARTTLS_AUTO'] == 'true'
+  }
+
+
+
   config.cache_classes = false
   config.active_storage.service = :local
 config.hosts << "selectively-spikiest-alfredo.ngrok-free.dev"

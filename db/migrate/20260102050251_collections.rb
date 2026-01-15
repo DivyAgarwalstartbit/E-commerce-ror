@@ -1,6 +1,6 @@
-class Collection < ActiveRecord::Migration[6.1]
+class Collections < ActiveRecord::Migration[6.1]
   def change
-    create_table :Collections do |t|
+    create_table :collections do |t|
       t.string :name
       t.text :description
       

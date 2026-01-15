@@ -5,23 +5,19 @@ class WishlistsController < ApplicationController
   end
 
   def create
-  combination = ProductVariantCombination.find(params[:product_variant_combination_id])
+    unless user_signed_in?
+      redirect_to new_user_session_path, alert: "You need to sign in to add items to your wishlist." and return
+    end
 
-  if user_signed_in?
+    combination = ProductVariantCombination.find(params[:product_variant_combination_id])
     wishlist_item = Wishlist.find_or_create_by(user: current_user, product_variant_combination: combination)
     wishlist_count = current_user.wishlist_items.count
-  else
-    # Store only combination ID in session for guest
-    session[:wishlist_ids] ||= []
-    session[:wishlist_ids] << combination.id unless session[:wishlist_ids].include?(combination.id)
-    wishlist_count = session[:wishlist_ids].size
-  end
 
-  respond_to do |format|
-    format.html { redirect_back fallback_location: root_path, notice: "Added to wishlist" }
-    format.json { render json: { wishlist_count: wishlist_count } }
+    respond_to do |format|
+      format.html { redirect_back fallback_location: root_path, notice: "Added to wishlist" }
+      format.json { render json: { wishlist_count: wishlist_count } }
+    end
   end
-end
 
   def destroy
     if user_signed_in?

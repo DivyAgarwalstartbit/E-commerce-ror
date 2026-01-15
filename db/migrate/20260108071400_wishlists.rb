@@ -1,4 +1,4 @@
-class Wishlist < ActiveRecord::Migration[6.1]
+class Wishlists < ActiveRecord::Migration[6.1]
   def change
     create_table :wishlists do |t|
       t.references :user, null: true, foreign_key: true  # allow null for guest users

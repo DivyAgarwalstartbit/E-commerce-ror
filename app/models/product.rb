@@ -24,6 +24,21 @@ class Product < ApplicationRecord
 
   private
 
+  def self.ransackable_attributes(auth_object = nil)
+    %w[
+      name
+      price
+      size
+      color
+      category_id
+      created_at
+    ]
+  end
+
+  def self.ransackable_associations(auth_object = nil)
+    %w[category]
+  end
+
   def assign_to_all_collection
     all_collection = Collection.find_or_create_by(name: "All")
     collections << all_collection unless collections.include?(all_collection)

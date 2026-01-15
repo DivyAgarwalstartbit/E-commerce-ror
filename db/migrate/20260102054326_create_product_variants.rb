@@ -7,7 +7,8 @@ class CreateProductVariants < ActiveRecord::Migration[6.1]
       t.string  :value, null: false
       t.integer :in_stock, null: false, default: 0
       t.string  :promotions, null: false
-
+       t.decimal :price,         precision: 10, scale: 2, null: false
+      t.decimal :compare_price, precision: 10, scale: 2
       t.timestamps
     end
   end

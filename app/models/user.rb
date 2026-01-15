@@ -9,7 +9,7 @@ class User < ApplicationRecord
   after_initialize :set_default_role, if: :new_record?
 
   # Associations
-  has_many :carts, dependent: :destroy
+  has_one :cart, dependent: :destroy
   has_many :orders, dependent: :destroy
   has_many :wishlists, dependent: :destroy
 

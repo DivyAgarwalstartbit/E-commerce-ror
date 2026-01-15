@@ -53,8 +53,12 @@
         </div>
         <div id="mobile-menu-wrap"></div>
         <div class="offcanvas__auth">
-            <a href="#">Login</a>
-            <a href="#">Register</a>
+            <% if user_signed_in? %>
+  <%= link_to "Logout", destroy_user_session_path, method: :delete, class: "logout-link" %>
+<% else %>
+  <%= link_to "Login", new_user_session_path, class: "login-link" %>
+  <%= link_to "Register", new_user_registration_path, class: "register-link" %>
+<% end %>
         </div>
     </div>
     <!-- Offcanvas Menu End -->
@@ -74,10 +78,10 @@
                     <nav class="header__menu">
                         <ul>
                             <li class="active"> <%= link_to "Home", root_path %></li>
-                            <li><%= link_to "Women's", collection_path(11) %></li>
-                            <li><%= link_to "Men's", collection_path(12) %></li>
-                            <li><%= link_to "Shop", collection_path(10) %></li>
-                            <li><a href="#">Pages</a>
+                            <li><%= link_to "Women's", collection_path(Collection.find_by(name: "Womens").id) %></li>
+                            <li><%= link_to "Men's", collection_path(Collection.find_by(name: "Mens").id) %></li>
+                            <li><%= link_to "Shop", collection_path(Collection.find_by(name: "All Products").id) %></li>
+                            <li><a href="#">Pages</a> 
                                 <ul class="dropdown">
                                     <li><a href="./product-details.html">Product Details</a></li>
                                     <li><a href="./shop-cart.html">Shop Cart</a></li>
@@ -93,8 +97,12 @@
                 <div class="col-lg-3">
                     <div class="header__right">
                         <div class="header__right__auth">
-                          <%= link_to "Login", new_user_session_path %>
-                            <%= link_to "Register", new_user_registration_path %>
+                          <% if user_signed_in? %>
+  <%= link_to "Logout", destroy_user_session_path, method: :delete, class: "logout-link" %>
+<% else %>
+  <%= link_to "Login", new_user_session_path, class: "login-link" %>
+  <%= link_to "Register", new_user_registration_path, class: "register-link" %>
+<% end %>
                         </div>
                         <ul class="header__right__widget">
                             <li><span class="icon_search search-switch"></span></li>
@@ -136,9 +144,9 @@
                     data-setbg="<%= asset_path('categories/category-1.jpg') %>">
                     <div class="categories__text">
                         <h1>Women’s fashion</h1>
-                        <% collection = Collection.find_by(id: 11) %>
+                        <% collection = Collection.find_by(name: "Womens") %>
                         <p><%= collection.description %></p>
-                        <%= link_to "shop now", collection_path(11) %>
+                        <%= link_to "shop now", collection_path(collection.id) %>
                     </div>
                 </div>
             </div>
@@ -148,9 +156,9 @@
                         <div class="categories__item set-bg" data-setbg="<%= asset_path('categories/category-2.jpg') %>">
                             <div class="categories__text">
                                 <h4>Men’s fashion</h4>
-                                <% collection = Collection.find_by(id: 10) %>
+                                <% collection = Collection.find_by(name: "Mens") %>
                                 <p><%= collection.products.count %> items</p>
-                                <%= link_to "shop now", collection_path(10) %>
+                                <%= link_to "shop now", collection_path(collection.id) %>
                             </div>
                         </div>
                     </div>
@@ -158,9 +166,9 @@
                         <div class="categories__item set-bg" data-setbg="<%= asset_path('categories/category-3.jpg') %>">
                             <div class="categories__text">
                                 <h4>Kid’s fashion</h4>
-                                <% collection = Collection.find_by(id: 12) %>
+                                <% collection = Collection.find_by(name: "Kids") %>
                                 <p><%= collection.products.count %> items</p>
-                               <%= link_to "shop now", collection_path(12) %>
+                               <%= link_to "shop now", collection_path(collection.id) %>
                             </div>
                         </div>
                     </div>
@@ -222,7 +230,6 @@
               <div class="label new">New</div>
               <ul class="product__hover">
                 <li>
-                     <%= css_classes  %>
                   <a href="<%= url_for(product.featured_image) if product.featured_image.attached? %>" class="image-popup">
                     <span class="arrow_expand"></span>
                   </a>

@@ -41,6 +41,8 @@ kids = Collection.find_or_create_by!(
   c.description = "Kids collection"
 end
 
+collections = [mens, womens, kids]
+
 # ---------------------------------------------------
 # Categories
 # ---------------------------------------------------
@@ -62,20 +64,17 @@ kids_cat = Category.find_or_create_by!(
 ) { |c| c.collection = kids }
 
 categories = [mens_cat, womens_cat, kids_cat]
-collections = [mens, womens, kids]
 
 # ---------------------------------------------------
 # Products + Variants
 # ---------------------------------------------------
 puts "Creating products..."
 
-10.times do |i|
-  category = categories.sample
-
+categories.each do |category|
   product = Product.create!(
-    name: "Product #{i + 1}",
-    short_description: "Short description of product #{i + 1}",
-    description: "Full description of product #{i + 1}",
+    name: "#{category.name} Product",
+    short_description: "Short description of #{category.name} product",
+    description: "Full description of #{category.name} product",
     brand: "Nike",
     specification: "Cotton fabric",
     price: rand(50..100),
@@ -92,11 +91,9 @@ puts "Creating products..."
     )
   end
 
-  # Assign product to a collection
+  # Assign product to collections
   product.collections << category.collection
-  
-product.collections << all_products
-
+  product.collections << all_products
 
   # ---------------------------------------------------
   # Variant options
@@ -146,3 +143,4 @@ product.collections << all_products
 end
 
 puts "Seeding completed successfully ✅"
+puts "Database seeded with collections , categories , products and variants"

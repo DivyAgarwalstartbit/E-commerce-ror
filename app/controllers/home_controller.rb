@@ -5,7 +5,7 @@ class HomeController < ApplicationController
     @best_seller_products  = products_for("Best Seller", 3)
     @mens_products         = products_for("Mens", 4)
     @womens_products       = products_for("Womens", 4)
-    @all_products          = products_for_multiple(["Mens", "Womens"], 8)
+    @all_products          = products_for_multiple(["Mens", "Womens" , "Kids"], 8)
   end
 
   private

@@ -7,8 +7,7 @@ class CreateProducts < ActiveRecord::Migration[6.1]
       t.text    :description
       t.string  :brand
 
-      t.decimal :price,         precision: 10, scale: 2, null: false
-      t.decimal :compare_price, precision: 10, scale: 2
+     
 
       t.text    :specification
 
