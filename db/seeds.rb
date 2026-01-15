@@ -124,7 +124,7 @@ categories.each do |category|
         product: product,
         sku: "SKU-#{product.id}-#{size.value}-#{color.value}",
         stock: rand(5..20),
-        price: product.price
+        price: rand(500..1000)
       )
 
       ProductVariantCombinationOption.create!(
