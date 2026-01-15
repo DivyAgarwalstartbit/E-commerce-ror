@@ -8,7 +8,7 @@ default: &default
  
 development:
   <<: *default
-  database: e_commerce_store_epma
+  database: e_commerce_store_igcq
   
   
  
