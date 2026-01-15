@@ -4,9 +4,10 @@ import Turbolinks from "turbolinks"
 import * as ActiveStorage from "@rails/activestorage"
 
 // ✅ LOAD JQUERY FIRST (import then expose to window)
-import $ from "jquery"
-window.$ = $
-window.jQuery = $
+import $ from 'jquery';
+import jQuery from 'jquery';
+window.$ = $;
+window.jQuery = jQuery;
 
 // ✅ THEN LOAD legacy plugins with require() so they run after window.jQuery is set
 require("../js/owl.carousel.min")
@@ -22,9 +23,9 @@ window.mixitup = mixitup
 // Main theme JS LAST
 require("../js/main")
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
   document.querySelectorAll('input[type="number"]').forEach(input => {
-    input.addEventListener('change', function() {
+    input.addEventListener('change', function () {
       this.closest('form').submit();
     });
   });
