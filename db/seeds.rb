@@ -77,8 +77,6 @@ categories.each do |category|
     description: "Full description of #{category.name} product",
     brand: "Nike",
     specification: "Cotton fabric",
-    price: rand(50..100),
-    compare_price: rand(110..150),
     category: category
   )
 
