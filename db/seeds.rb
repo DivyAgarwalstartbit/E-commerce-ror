@@ -103,7 +103,9 @@ categories.each do |category|
     ProductVariantOption.create!(
       product: product,
       variant_type: "Size",
-      value: size
+      value: size,
+       price: rand(50..100),
+      compare_price: rand(101..150)
     )
   end
 
@@ -111,7 +113,9 @@ categories.each do |category|
     ProductVariantOption.create!(
       product: product,
       variant_type: "Color",
-      value: color
+      value: color,
+      price: rand(50..100),
+      compare_price: rand(101..150)
     )
   end
 
@@ -124,7 +128,7 @@ categories.each do |category|
         product: product,
         sku: "SKU-#{product.id}-#{size.value}-#{color.value}",
         stock: rand(5..20),
-        price: rand(500..1000)
+        price: rand(50..100)
       )
 
       ProductVariantCombinationOption.create!(
