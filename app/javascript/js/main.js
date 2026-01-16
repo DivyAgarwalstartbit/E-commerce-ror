@@ -1,18 +1,14 @@
 // app/javascript/packs/ashion.js
 import $ from 'jquery';
-import jQuery from 'jquery';
 window.$ = $;
-window.jQuery = jQuery;
-
+window.jQuery = $;
 
 
 (function ($) {
   'use strict';
 
-
-
-  $(function () {
-
+  // Function to initialize all UI components
+  function initializeUI() {
     /*------------------
         Preloader
     --------------------*/
@@ -223,7 +219,9 @@ window.jQuery = jQuery;
       $(".size__btn label").removeClass('active');
       $(this).addClass('active');
     });
+  }
 
-  }); // turbolinks:load
+  // Run on both initial page load AND Turbolinks navigation
+  $(document).on('turbolinks:load', initializeUI);
 
 })(jQuery);

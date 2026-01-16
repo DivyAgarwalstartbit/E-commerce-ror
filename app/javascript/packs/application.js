@@ -5,9 +5,8 @@ import * as ActiveStorage from "@rails/activestorage"
 
 // ✅ LOAD JQUERY FIRST (import then expose to window)
 import $ from 'jquery';
-import jQuery from 'jquery';
 window.$ = $;
-window.jQuery = jQuery;
+window.jQuery = $;
 
 // ✅ THEN LOAD legacy plugins with require() so they run after window.jQuery is set
 require("../js/owl.carousel.min")
