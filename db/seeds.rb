@@ -1,5 +1,4 @@
 puts "Cleaning database..."
-
 ProductVariantCombinationitem.destroy_all
 ProductVariantCombination.destroy_all
 ProductVariant.destroy_all
@@ -8,7 +7,6 @@ Category.destroy_all
 Collection.destroy_all
 
 puts "Creating collections..."
-
 womens = Collection.create!(
   name: "Womens",
   description: "Explore the latest trends in women's fashion."
@@ -24,23 +22,24 @@ kids = Collection.create!(
   description: "Fun, colorful and comfortable clothing for kids."
 )
 
-puts "Creating categories..."
+all_products = Collection.create!(
+  name: "All products",
+  description: "Browse our complete collection of products."
+)
 
+puts "Creating categories..."
 womens_dresses = Category.create!(name: "Dresses", collection: womens)
 womens_tshirts = Category.create!(name: "T-shirt", collection: womens)
-
 mens_shirts = Category.create!(name: "Shirt", collection: mens)
 mens_tshirts = Category.create!(name: "T-shirt", collection: mens)
-
 kids_wear = Category.create!(name: "Kids Wear", collection: kids)
 
 puts "Creating products..."
-
 products = []
 
 products << Product.create!(
   name: "Floral Summer Dress",
-  slug: "floeral-summer-dress",
+  slug: "floral-summer-dress",
   brand: "Zara",
   short_description: "Light and breezy summer dress.",
   description: "Beautiful floral dress perfect for summer.",
@@ -72,13 +71,14 @@ products << Product.create!(
 )
 
 puts "Connecting products to collections..."
-
 products.each do |product|
-  product.collections << product.category.collection
+  # Add to category's collection
+  product.collections << product.category.collection unless product.collections.include?(product.category.collection)
+  # Add to "All products" collection
+  product.collections << all_products unless product.collections.include?(all_products)
 end
 
 puts "Creating variants and combinations..."
-
 products.each do |product|
   case product.category.name
   when "Shirt", "T-shirt"
@@ -111,7 +111,7 @@ products.each do |product|
       price: rand(20..100),
       compared_price: rand(101..150),
       stock_qunatity: rand(5..20),
-      sku: "#{product.id}-#{size_var.value}-#{color_var.value}"
+      sku: "#{product.slug}-#{size_var.value}-#{color_var.value}".downcase
     )
 
     ProductVariantCombinationitem.create!(
