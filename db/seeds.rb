@@ -7,6 +7,8 @@ ProductVariant.destroy_all   # references Product
 Product.destroy_all          # references Category
 Category.destroy_all         # references Collection
 Collection.destroy_all
+User.destroy_all             # optional: clear users if you want a clean slate
+Admin.destroy_all            # clear admins to recreate default admin
 
 puts "Creating collections..."
 womens = Collection.create!(
@@ -128,4 +130,11 @@ products.each do |product|
   end
 end
 
-puts "Dummy data created successfully!"
+puts "Creating default admin..."
+Admin.create!(
+  email: "admin@example.com",
+  password: "123456",
+  password_confirmation: "123456"
+)
+
+puts "Dummy data and admin created successfully!"
