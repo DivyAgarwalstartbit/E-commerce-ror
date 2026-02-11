@@ -22,7 +22,7 @@ gem 'jbuilder', '~> 2.7'
 # Use Active Model has_secure_password
 gem 'bcrypt', '~> 3.1.7'
 gem 'active_storage_validations'
-gem "ransack"
+
 gem "cloudinary"
 gem "activestorage-cloudinary-service"
 # For OAuth support with Devise
