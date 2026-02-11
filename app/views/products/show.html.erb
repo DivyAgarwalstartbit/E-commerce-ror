@@ -79,15 +79,18 @@
               <%= f.submit "Add to cart", class: "cart-btn" %>
 <% end %>
               <ul>
-                <li>
-               
-  <%= button_to wishlist_items_path(product_id: @product.id), method: :post, class: "icon_heart_alt wishlist-btn" do %>
-    
-  <% end %>
+  <li>
+    <%= button_to wishlist_items_path(product_id: @product.id),
+              method: :post,
+              remote: true,
+              class: "wishlist-btn",
+              form: { data: { turbo: false } } do %>
+  <span class="icon_heart_alt"></span>
+<% end %>
 
-                </li>
-                <li><a href="#"><span class="icon_adjust-horiz"></span></a></li>
-              </ul>
+  </li>
+  <li><a href="#"><span class="icon_adjust-horiz"></span></a></li>
+</ul>
             
           </div>
 
@@ -214,7 +217,7 @@
   <script>
 
 
-document.addEventListener("turbolinks:load", () => {
+
   const selectedOptions = {};
 
   document.querySelectorAll(".variant-option").forEach(input => {
@@ -248,7 +251,6 @@ document.addEventListener("turbolinks:load", () => {
     // Update hidden variant ID
     document.getElementById("selected-variant-id").value = match.id;
   }
-});
 
 
 
