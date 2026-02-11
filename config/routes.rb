@@ -37,6 +37,7 @@ Rails.application.routes.draw do
   resources :conversations, only: [:index, :show, :create] do
     resources :messages, only: [:create]
   end
+  get 'start_chat', to: 'conversations#create', as: :start_chat
   post "/place_order", to: "orders#place_order"
 
   resources :orders do

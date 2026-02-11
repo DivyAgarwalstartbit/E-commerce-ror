@@ -11,8 +11,5 @@ class ConversationsController < ApplicationController
     @messages = @conversation.messages
   end
 
-  def create
-    conversation = current_user.conversations.create!(status: "open")
-    redirect_to conversation_path(conversation)
-  end
+  
 end

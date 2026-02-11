@@ -12,6 +12,13 @@ class User < ApplicationRecord
   has_many :payments, dependent: :destroy
   has_many :billing_details , dependent: :destroy , foreign_key: :users_id
 
+  after_create :create_initial_conversation
+  private
+
+  def create_initial_conversation
+    conversations.create(status: "open")
+  end
+
  def self.from_omniauth(auth)
   where(provider: auth.provider, uid: auth.uid).first_or_create do |user|
     user.email = auth.info.email

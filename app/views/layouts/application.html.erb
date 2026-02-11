@@ -113,6 +113,13 @@
    
   <% end %>
 </li>
+
+<% if user_signed_in? %>
+  <%= link_to conversation_path(current_user.conversations.first), class: "chat-link" do %>
+    <span class="icon_chat_alt"></span>
+  <% end %>
+<% end %>
+
                         </ul>
                     </div>
                 </div>
