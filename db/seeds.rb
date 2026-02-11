@@ -6,8 +6,7 @@ ProductVariantCombination.destroy_all  # references Product
 ProductVariant.destroy_all   # references Product
 Product.destroy_all          # references Category
 Category.destroy_all         # references Collection
-Collection.destroy_all
-User.destroy_all             # optional: clear users if you want a clean slate
+Collection.destroy_all         # optional: clear users if you want a clean slate
 Admin.destroy_all            # clear admins to recreate default admin
 
 puts "Creating collections..."
