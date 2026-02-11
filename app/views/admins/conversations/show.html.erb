@@ -1,0 +1,152 @@
+<div class="chat-container">
+  <div class="chat-header">
+    <h2>Chat with <%= @conversation.user.email %></h2>
+    
+  </div>
+
+  <div id="messages"
+       class="chat-messages"
+       data-conversation-id="<%= @conversation.id %>">
+    <%= render @messages %>
+  </div>
+
+  <%= form_with model: [@conversation, Message.new],
+                local: false,
+                html: { id: "message_form", class: "chat-form" } do |f| %>
+    <%= f.text_field :body,
+          placeholder: "Type your message…",
+          class: "chat-input" %>
+    <%= f.submit "Send", class: "chat-send" %>
+  <% end %>
+</div>
+
+<style>
+/* Container */
+.chat-container {
+  max-width: 420px;
+  height: 600px;
+  margin: 40px auto;
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+  overflow: hidden;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* Header */
+.chat-header {
+  background: #111827;
+  color: #fff;
+  padding: 16px;
+}
+
+.chat-header h2 {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0;
+}
+
+/* Messages area */
+.chat-messages {
+  flex: 1;
+  padding: 16px;
+  background: #f9fafb;
+  overflow-y: auto;
+}
+
+/* Message base */
+.message {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 12px;
+  max-width: 75%;
+}
+
+/* User (customer) */
+.message.user {
+  align-self: flex-end;
+  text-align: right;
+}
+
+/* Admin (store) */
+.message.admin {
+  align-self: flex-start;
+}
+
+/* Bubble */
+.message-bubble {
+  padding: 10px 14px;
+  border-radius: 16px;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+/* User bubble */
+.message.user .message-bubble {
+  background: #2563eb;
+  color: #ffffff;
+  border-bottom-right-radius: 4px;
+}
+
+/* Admin bubble */
+.message.admin .message-bubble {
+  background: #e5e7eb;
+  color: #111827;
+  border-bottom-left-radius: 4px;
+}
+
+/* Store label */
+.sender-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  color: #2563eb;
+  margin-bottom: 4px;
+}
+
+/* Timestamp */
+.message-meta {
+  font-size: 11px;
+  color: #6b7280;
+  margin-top: 4px;
+}
+
+/* Input */
+.chat-form {
+  display: flex;
+  padding: 12px;
+  border-top: 1px solid #e5e7eb;
+  background: #ffffff;
+}
+
+.chat-input {
+  flex: 1;
+  padding: 10px 14px;
+  border-radius: 20px;
+  border: 1px solid #d1d5db;
+  font-size: 14px;
+}
+
+.chat-input:focus {
+  outline: none;
+  border-color: #2563eb;
+}
+
+.chat-send {
+  margin-left: 8px;
+  padding: 0 18px;
+  border-radius: 20px;
+  border: none;
+  background: #2563eb;
+  color: #ffffff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.chat-send:hover {
+  background: #1d4ed8;
+}
+
+</style>

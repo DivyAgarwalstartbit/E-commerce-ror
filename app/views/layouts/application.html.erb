@@ -11,6 +11,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Ashion | Template</title>
+    <%= favicon_link_tag 'online-shopping.png', type: 'image/png' %>
+
     <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload' %>
     <%= javascript_pack_tag 'application', 'data-turbolinks-track': 'reload' %>
      <link href="https://fonts.googleapis.com/css2?family=Cookie&display=swap" rel="stylesheet">
@@ -30,24 +32,12 @@
         <ul class="offcanvas__widget">
             <li><span class="icon_search search-switch"></span></li>
             <li>
-    <%= link_to wishlists_path do %>
-      <span class="icon_heart_alt"></span>
-      <div id="wishlist-count">
-  <% if wishlist_count > 0 %>
-    <div class="tip"><%= wishlist_count %></div>
-  <% end %>
-</div>
-    <% end %>
+    
   </li>
 
   <!-- Cart -->
   <li>
-    <%= link_to carts_path do %>
-      <span class="icon_bag_alt"></span>
-      <% if cart_count > 0 %>
-        <div class="tip"><%= cart_count %></div>
-      <% end %>
-    <% end %>
+    
   </li>
         </ul>
         <div class="offcanvas__logo">
@@ -79,7 +69,7 @@
                             <li class="active"> <%= link_to "Home", root_path %></li>
                             <li><%= link_to "Women's", collection_path(Collection.find_by(name: "Womens").id) %></li>
                             <li><%= link_to "Men's", collection_path(Collection.find_by(name: "Mens").id) %></li>
-                            <li><%= link_to "Shop", collection_path(Collection.find_by(name: "All Products").id) %></li>
+                            <li><%= link_to "Shop", collection_path(Collection.find_by(name: "All products").id) %></li>
                             <li><a href="#">Pages</a> 
                                 <ul class="dropdown">
                                     <li><a href="./product-details.html">Product Details</a></li>
@@ -105,24 +95,23 @@
                         </div>
                         <ul class="header__right__widget">
                             <li><span class="icon_search search-switch"></span></li>
+                            
                            <li>
-    <%= link_to wishlists_path do %>
-      <span class="icon_heart_alt"></span>
-      <% if wishlist_count > 0 %>
-        <div class="tip"><%= wishlist_count %></div>
-      <% end %>
+  <%= link_to wishlists_path, class: "wishlist-link" do %>
+    <span class="icon_heart_alt"></span>
+     <% if user_signed_in? %>
+    <div class="tip"><%= current_user.wishlist.wishlist_items.count %></div>
     <% end %>
-  </li>
+  <% end %>
+</li>
 
-  <!-- Cart -->
-  <li>
-    <%= link_to carts_path do %>
-      <span class="icon_bag_alt"></span>
-      <% if cart_count > 0 %>
-        <div class="tip"><%= cart_count %></div>
-      <% end %>
-    <% end %>
-  </li>
+<li>
+<%= link_to carts_path, class: "wishlist-link" do %>
+    <span class="icon_bag_alt"></span>
+    <div class="tip"><%= current_user.cart.line_items.count %></div>
+   
+  <% end %>
+</li>
                         </ul>
                     </div>
                 </div>
@@ -134,10 +123,6 @@
     </header>
 
 
-
-
-    
-  
     <%= yield %>
 
     <div class="instagram">
@@ -264,5 +249,9 @@
         </div>
     </div>
 </footer>
+
+<!-- Page-specific JavaScript -->
+<%= yield :page_scripts %>
+
   </body>
 </html>

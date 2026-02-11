@@ -1,0 +1,186 @@
+<div class="breadcrumb-option">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="breadcrumb__links">
+                        <a href="./index.html"><i class="fa fa-home"></i> Home</a>
+                        <span>Billing Details</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <%= form_with url: place_order_path, method: :post do %>
+
+
+    <section class="checkout spad">
+        <div class="container">
+        
+                <div class="row">
+                    <div class="col-lg-8">
+                        <h5>Billing details:-</h5>
+                        <div class="row">
+                          
+
+<div class="billing-cards">
+
+  <% @billing_details.each do |bill| %>
+    <label class="billing-card billing-select-card">
+
+      <!-- RADIO BUTTON -->
+      <input type="radio" name="billing_detail_id" value="<%= bill.id %>" required>
+
+      <h6><%= bill.first_name %> <%= bill.last_name %></h6>
+
+      <p>
+        <%= bill.street_address %>, <%= bill.apartment_name %><br>
+        <%= bill.city %>, <%= bill.state %> - <%= bill.postal_code %><br>
+        <%= bill.country %>
+      </p>
+
+      <p><strong>Email:</strong> <%= bill.email %></p>
+      <p><strong>Phone:</strong> <%= bill.phone_number %></p>
+
+    </label>
+  <% end %>
+
+</div>
+
+
+
+
+
+                     </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="checkout__order">
+                                <h5>Your order</h5>
+                                <div class="checkout__order__product">
+                                    <ul>
+                                        <li>
+                                            <span class="top__text">Product</span>
+                                            <span class="top__text__right">Total</span>
+                                        </li>
+                                        <li>01. Chain buck bag <span>$ 300.0</span></li>
+                                        <li>02. Zip-pockets pebbled<br /> tote briefcase <span>$ 170.0</span></li>
+                                        <li>03. Black jean <span>$ 170.0</span></li>
+                                        <li>04. Cotton shirt <span>$ 110.0</span></li>
+                                    </ul>
+                                </div>
+                                <div class="checkout__order__total">
+                                    <ul>
+                                        <li>Subtotal <span>$ 750.0</span></li>
+                                        <li>Total <span>$ 750.0</span></li>
+                                   <button type="submit" class="site-btn">Place Order & Pay</button>
+                                </div>
+                              
+                            </div>
+                        </div>
+                    </div>
+                
+            </div>
+        </section>
+        <% end %>
+
+        <style>
+        .billing-select-box {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.billing-select-card {
+  border: 1px solid #ddd;
+  padding: 15px;
+  border-radius: 8px;
+  background: #fff;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.billing-select-card:hover {
+  border-color: #e53637;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+}
+
+.billing-select-card input[type="radio"] {
+  margin-right: 10px;
+}
+       .billing-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.billing-card {
+  background: #fff;
+  border: 1px solid #eee;
+  padding: 18px;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+  transition: 0.2s ease;
+}
+
+.billing-card:hover {
+  box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+  transform: translateY(-2px);
+}
+
+.billing-card h6 {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.billing-card p {
+  font-size: 14px;
+  color: #555;
+  line-height: 1.6;
+  margin-bottom: 6px;
+}
+
+/* Buttons */
+.billing-card-actions {
+  margin-top: 12px;
+  display: flex;
+  gap: 10px;
+}
+
+.btn-edit {
+  padding: 6px 12px;
+  background: #007bff;
+  color: #fff;
+  font-size: 13px;
+  border-radius: 4px;
+  text-decoration: none;
+}
+
+.btn-delete {
+  padding: 6px 12px;
+  background: #dc3545;
+  color: #fff;
+  font-size: 13px;
+  border-radius: 4px;
+  text-decoration: none;
+}
+
+.btn-edit:hover { background: #0056b3; }
+.btn-delete:hover { background: #b52a37; }
+.billing-select-card input {
+  display: none;
+}
+
+.billing-select-card {
+  cursor: pointer;
+  border: 2px solid #eee;
+}
+
+.billing-select-card:has(input:checked) {
+  border-color: #e53637;
+  background: #fff6f6;
+}
+
+
+        </style>

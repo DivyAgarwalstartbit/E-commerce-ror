@@ -1,9 +1,4 @@
-
- 
-   
-    
-    <!-- Breadcrumb Begin -->
-    <div class="breadcrumb-option">
+ <div class="breadcrumb-option">
         <div class="container">
             <div class="row">
                 <div class="col-lg-12">
@@ -31,55 +26,46 @@
                 <th>action</th>
               </tr>
             </thead>
-
-         <tbody>
-  <% if @wishlist_items.any? %>
-    <% @wishlist_items.each do |item| %>
-      <% combination = item.is_a?(Wishlist) ? item.product_variant_combination : item %>
-      <% product     = combination.product if combination %>
+<tbody>
+  <% if @items.any? %>
+    <% @items.each do |item| %>
+      <% product = item.product %>
       <tr>
         <td class="cart__product__item">
-           <div class="cart__product__item__image">
-    <% if product&.featured_image.attached? %>
-      <%= image_tag product.featured_image, alt: product.name, width: 100, height: 100 %>
-    <% else %>
-      <%= image_tag "default-product.jpeg", alt: "No image available", width: 100, height: 100 %>
-    <% end %>
-  </div>
+          <div class="cart__product__item__image">
+            <% if product&.featured_image.attached? %>
+              <%= image_tag product.featured_image, alt: product.name, width: 100, height: 100 %>
+            <% else %>
+              <%= image_tag "default-product.jpeg", alt: "No image available", width: 100, height: 100 %>
+            <% end %>
+          </div>
+
           <div class="cart__product__item__title">
             <% if product %>
               <h6><%= product.name %></h6>
-              <small>
-                Variant: <%= combination.product_variant_options.map(&:value).join(", ") %>
-              </small>
               <div class="rating">
-      <i class="fa fa-star"></i>
-      <i class="fa fa-star"></i>
-      <i class="fa fa-star"></i>
-      <i class="fa fa-star"></i>
-      <i class="fa fa-star"></i>
-    </div>
-
+                <% 5.times do %>
+                  <i class="fa fa-star"></i>
+                <% end %>
+              </div>
             <% else %>
               <h6>Product not available</h6>
             <% end %>
-             
           </div>
         </td>
 
         <td class="cart__price">
           <% if product %>
-            <%= number_to_currency(product.product_variant_options.first.price) %>
+            <%= number_to_currency(product.product_variant_combinations.first.price) %>
           <% else %>
             N/A
           <% end %>
         </td>
 
         <td>
-          
-          <button type="button" class="remove-wishlist-btn btn btn-danger btn-sm" data-wishlist-id="<%= item.id %>" style="padding: 5px 10px; background-color: #d9534f; color: white; border: none; border-radius: 3px; cursor: pointer;">
-              Remove
-            </button>
+          <%= button_to wishlist_item_path(item), method: :delete, class: "remove-wishlist-btn btn btn-danger btn-sm", data: { confirm: "Are you sure?" } do %>
+            Remove
+          <% end %>
         </td>
       </tr>
     <% end %>
@@ -89,6 +75,7 @@
     </tr>
   <% end %>
 </tbody>
+
           </table>
         </div>
       </div>
@@ -103,87 +90,4 @@
       </div>
     </div>
 
-
-    <!-- Shop Cart Section End -->
-
-    <!-- Instagram Begin -->
-    
-   
-    <!-- Footer Section End -->
-
-    <!-- Search Begin -->
-    <div class="search-model">
-        <div class="h-100 d-flex align-items-center justify-content-center">
-            <div class="search-close-switch">+</div>
-            <form class="search-model-form">
-                <input type="text" id="search-input" placeholder="Search here.....">
-            </form>
-        </div>
-    </div>
-    <!-- Search End -->
-
-    <!-- Wishlist Remove Script -->
-    <script>
-    document.addEventListener("DOMContentLoaded", function() {
-      const removeButtons = document.querySelectorAll(".remove-wishlist-btn");
-      console.log("Remove buttons found:", removeButtons.length);
-
-      removeButtons.forEach(button => {
-        button.addEventListener("click", function(e) {
-          e.preventDefault();
-
-          const wishlistId = this.getAttribute("data-wishlist-id");
-          const row = this.closest("tr");
-          console.log("Removing wishlist item:", wishlistId);
-
-          if (confirm("Remove this item from your wishlist?")) {
-            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
-            console.log("CSRF Token:", csrfToken);
-
-            fetch(`/wishlists/${wishlistId}`, {
-              method: "DELETE",
-              headers: {
-                "X-Requested-With": "XMLHttpRequest",
-                "Accept": "application/json",
-                "Content-Type": "application/json",
-                "X-CSRF-Token": csrfToken
-              }
-            })
-            .then(response => {
-              console.log("Response status:", response.status);
-              if (response.ok || response.status === 204) {
-                return { success: true };
-              }
-              return response.json();
-            })
-            .then(data => {
-              console.log("Response data:", data);
-              if (data.success) {
-                // Fade out and remove the row
-                row.style.opacity = "0";
-                row.style.transition = "opacity 0.3s ease-out";
-                setTimeout(() => {
-                  row.remove();
-                  
-                  // Check if table is empty
-                  const tbody = document.querySelector("tbody");
-                  const rows = tbody.querySelectorAll("tr");
-                  
-                  if (rows.length === 0) {
-                    location.reload();
-                  }
-                }, 300);
-              } else {
-                alert(data.message || "Error removing item");
-              }
-            })
-            .catch(error => {
-              console.error("Error:", error);
-              alert("Error removing item. Check console for details.");
-            });
-          }
-        });
-      });
-    });
-    </script>
-    <!-- Wishlist Remove Script End -->
+    </section>

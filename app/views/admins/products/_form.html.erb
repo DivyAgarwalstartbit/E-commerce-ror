@@ -1,0 +1,164 @@
+<%= form_for [:admins, @product], html: {multipart: true} do |f| %>
+  <div class="product-basic">
+    <div>
+      <%= f.label :name, "Product Name" %>
+      <%= f.text_field :name, placeholder: "Enter product name" %>
+    </div>
+
+    <div>
+      <%= f.label :slug %>
+      <%= f.text_field :slug, placeholder: "Enter unique slug" %>
+    </div>
+
+    <div>
+      <%= f.label :brand %>
+      <%= f.text_field :brand %>
+    </div>
+
+    <div>
+      <%= f.label :category %>
+      <%= f.collection_select :category_id, Category.all, :id, :name, prompt: "Select Category" %>
+    </div>
+
+    <div>
+      <%= f.check_box :featured %> 
+      <%= f.label :featured %>
+    </div>
+
+      <%= f.label :short_description %>
+      <%= f.text_area :short_description, rows: 2 %>
+    </div>
+
+    <div>
+      <%= f.label :description %>
+      <%= f.text_area :description, rows: 5 %>
+    </div>
+
+    <div>
+      <%= f.label :featured_image %>
+      <%= f.file_field :featured_image %>
+    </div>
+  </div>
+
+  <hr>
+
+  <h3>Variants</h3>
+  <div id="variants">
+    <%= f.fields_for :product_variants do |vf| %>
+      <div class="variant-row">
+        <%= vf.text_field :variant_type, placeholder: "Variant Type (e.g., Size)" %>
+        <%= vf.text_field :value, placeholder: "Value (e.g., M)" %>
+      </div>
+    <% end %>
+  </div>
+
+  <button type="button" id="add-variant">Add Variant</button>
+
+  <hr>
+
+  <h3>Combinations Preview</h3>
+  <table id="combinations-table">
+    <thead>
+      <tr>
+        <th>Variants</th>
+        <th>Price</th>
+        <th>Compare price </th>
+        <th>Stock</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <div>
+    <%= f.submit "Create Product" %>
+  </div>
+<% end %>
+
+<script>
+document.addEventListener("turbolinks:load", () => {
+  const variantsContainer = document.getElementById("variants");
+  const addVariantBtn = document.getElementById("add-variant");
+  const combinationsTableBody = document.querySelector("#combinations-table tbody");
+
+  // Cartesian product function for generating combinations
+  function cartesian(arr) {
+    return arr.reduce((a, b) =>
+      a.flatMap(d => b.map(e => d.concat(e))), [[]]
+    );
+  }
+
+  // Update combinations table
+  function updateCombinations() {
+    const groups = {};
+
+    // Gather all variant values by type
+    document.querySelectorAll(".variant-row").forEach(row => {
+      const typeInput = row.querySelector("input[name*='variant_type']");
+      const valueInput = row.querySelector("input[name*='value']");
+
+      const type = typeInput.value.trim();
+      const value = valueInput.value.trim();
+
+      if (!type || !value) return;
+
+      groups[type] = groups[type] || [];
+      groups[type].push(value);
+    });
+
+    // Clear previous table
+    combinationsTableBody.innerHTML = "";
+
+    const values = Object.values(groups);
+    if (values.length === 0) return;
+
+    const combinations = cartesian(values);
+
+    // Build table rows
+    combinations.forEach(combo => {
+
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${combo.join(" / ")}</td>
+        <td><input type="number" name="product[combination_prices][]" placeholder="Price" min="0"></td>
+        <td><input type="number" name="product[combination_compared_prices][]" placeholder="Compare Price" min="0"></td>
+        <td><input type="number" name="product[combination_stock][]" placeholder="Stock" min="0"></td>
+      `;
+      combinationsTableBody.appendChild(tr);
+    });
+  }
+
+  // Add new variant row
+  addVariantBtn.addEventListener("click", () => {
+    const div = document.createElement("div");
+    const index = document.querySelectorAll('.variant-row').length;
+    div.className = "variant-row";
+    div.innerHTML = `
+      <input type="text" name="product[product_variants_attributes][${index}][variant_type]" placeholder="Variant Type">
+      <input type="text" name="product[product_variants_attributes][${index}][value]" placeholder="Value">
+      <a href="#" class="remove-variant">Remove</a>
+    `;
+    variantsContainer.appendChild(div);
+
+    // Attach remove event
+    div.querySelector(".remove-variant").addEventListener("click", e => {
+      e.preventDefault();
+      div.remove();
+      updateCombinations();
+    });
+
+    // Recalculate combinations when typing
+    div.querySelectorAll("input").forEach(input => {
+      input.addEventListener("input", updateCombinations);
+    });
+  });
+
+  // Initial input listener for existing variant rows
+  document.querySelectorAll(".variant-row input").forEach(input => {
+    input.addEventListener("input", updateCombinations);
+  });
+
+  // Initial table render
+  updateCombinations();
+});
+
+</script>

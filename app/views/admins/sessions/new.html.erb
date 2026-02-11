@@ -1,0 +1,136 @@
+<h2 style="padding-top:20px " > Admin Log in</h2>
+
+<style>
+  
+  form {
+    max-width: 400px;
+    margin: 0px auto 50px auto;
+    padding: 40px;
+    background-color: #fff;
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    font-family: 'Arial', sans-serif;
+  }
+
+ h2 {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #333;
+    font-size: 28px;
+  }
+  .field {
+    margin-bottom: 25px;
+  }
+  
+  label {
+   
+   
+    color: #ccc;
+   
+  }
+
+ input[type="email"],
+  input[type="password"] {
+    width: 100%;
+    padding: 14px 18px;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+  }
+
+  input::placeholder {
+    color: #aaa;
+    font-style: italic;
+  }
+
+  input[type="email"]:focus,
+  input[type="password"]:focus {
+    outline: none;
+    border-color: #e50914;
+    box-shadow: 0 0 10px rgba(229, 9, 20, 0.4);
+  }
+
+  input[type="checkbox"] {
+    margin-right: 8px;
+  }
+
+  .actions {
+    text-align: center;
+    margin-top: 20px;
+  }
+
+  input[type="submit"] {
+    background-color: #e50914;
+    color: white;
+    font-weight: bold;
+    padding: 14px 50px;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    text-transform: uppercase;
+    font-size: 16px;
+    transition: all 0.3s ease;
+  }
+
+  input[type="submit"]:hover {
+    background-color: #b0070f;
+    transform: scale(1.05);
+  }
+
+  .links {
+    margin-top: 20px;
+    text-align: center;
+  }
+
+  .links a {
+    color: #e50914;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s ease;
+  }
+
+  .links a:hover {
+    color: #b0070f;
+  }
+
+  .error_messages {
+    background-color: #330000;
+    border: 1px solid #b30000;
+    padding: 10px 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    color: #ff4d4d;
+    font-size: 14px;
+  }
+</style>
+
+<%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
+  <%= render "users/shared/error_messages", resource: resource %>
+
+  <div class="field">
+    <%= f.label :email %>
+    <%= f.email_field :email, autofocus: true, autocomplete: "email", placeholder: "Email" %>
+  </div>
+
+  <div class="field">
+    <%= f.label :password %>
+    <%= f.password_field :password, autocomplete: "current-password", placeholder: "Password" %>
+  </div>
+
+  <% if devise_mapping.rememberable? %>
+    <div class="field">
+      <%= f.check_box :remember_me %>
+      <%= f.label :remember_me, "Remember me" %>
+    </div>
+  <% end %>
+
+  <div class="actions">
+    <%= f.submit "Log in" %>
+  </div>
+
+  <div class="links">
+    <%= render "admins/shared/links" %>
+  </div>
+<% end %>

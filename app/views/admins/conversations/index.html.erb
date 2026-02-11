@@ -1,0 +1,66 @@
+<!-- app/views/admins/conversations/index.html.erb -->
+<h1>All Conversations</h1>
+
+<table class="admin-conversations-table">
+  <thead>
+    <tr>
+      <th>Conversation ID</th>
+      <th>User</th>
+      <th>Last Message</th>
+      <%# <th>Status</th> %>
+      <th>Created At</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @conversations.each do |conversation| %>
+      <tr>
+        <td><%= conversation.id %></td>
+        <td><%= conversation.user.email %></td>
+        <td>
+          <% last_msg = conversation.messages.order(created_at: :desc).first %>
+          <%= last_msg ? truncate(last_msg.body, length: 50) : "No messages yet" %>
+        </td>
+         <%# <td><%= conversation.status.capitalize %></td>
+        <td><%= conversation.created_at.strftime("%b %d, %Y %H:%M") %></td>
+        <td>
+          <%= link_to "Open", admins_conversation_path(conversation), class: "btn btn-primary" %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<style>
+.admin-conversations-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.admin-conversations-table th,
+.admin-conversations-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+.admin-conversations-table th {
+  background-color: #f2f2f2;
+  text-align: left;
+}
+
+.admin-conversations-table tr:hover {
+  background-color: #f9f9f9;
+}
+
+.btn {
+  padding: 5px 10px;
+  text-decoration: none;
+  color: white;
+  background-color: #007bff;
+  border-radius: 3px;
+}
+
+.btn:hover {
+  background-color: #0056b3;
+}
+</style>

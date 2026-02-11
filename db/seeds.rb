@@ -1,148 +1,56 @@
-puts "Cleaning database..."
-
-Wishlist.delete_all
-LineItem.delete_all
-ProductVariantCombinationOption.delete_all
-ProductVariantCombination.delete_all
-ProductVariantOption.delete_all
-CollectionProduct.delete_all
-Product.delete_all
-Category.delete_all
-Collection.delete_all
-
-puts "Database cleaned ✅"
-
-# ---------------------------------------------------
-# Collections
-# ---------------------------------------------------
-puts "Creating collections..."
-
-all_products = Collection.find_or_create_by!(
-  name: "All Products"
-) do |c|
-  c.description = "All products collection"
-end
-
-mens = Collection.find_or_create_by!(
-  name: "Mens"
-) do |c|
-  c.description = "Mens collection"
-end
-
-womens = Collection.find_or_create_by!(
-  name: "Womens"
-) do |c|
-  c.description = "Womens collection"
-end
-
-kids = Collection.find_or_create_by!(
-  name: "Kids"
-) do |c|
-  c.description = "Kids collection"
-end
-
-collections = [mens, womens, kids]
-
-# ---------------------------------------------------
-# Categories
-# ---------------------------------------------------
-puts "Creating categories..."
-
-mens_cat = Category.find_or_create_by!(
-  name: "Shirts",
-  gender: "Mens"
-) { |c| c.collection = mens }
-
-womens_cat = Category.find_or_create_by!(
-  name: "Dresses",
-  gender: "Womens"
-) { |c| c.collection = womens }
-
-kids_cat = Category.find_or_create_by!(
-  name: "T-Shirts",
-  gender: "Kids"
-) { |c| c.collection = kids }
-
-categories = [mens_cat, womens_cat, kids_cat]
-
-# ---------------------------------------------------
-# Products + Variants
-# ---------------------------------------------------
-puts "Creating products..."
-
-categories.each do |category|
-  product = Product.create!(
-    name: "#{category.name} Product",
-    short_description: "Short description of #{category.name} product",
-    description: "Full description of #{category.name} product",
-    brand: "Nike",
-    specification: "Cotton fabric",
-    category: category
-  )
-
-  # Attach image
-  image_path = Rails.root.join("app/assets/images/default-product.jpeg")
-  if File.exist?(image_path)
-    product.featured_image.attach(
-      io: File.open(image_path),
-      filename: "default-product.jpeg"
-    )
+Product.find_each do |product|
+  puts "Processing product: #{product.name}"
+ 
+  # --- STEP 1: Define variants dynamically ---
+  case product.category&.name
+  when "Shirt", "T-shirt", "Mens", "Womens"
+    sizes  = %w[S M L XL]
+    colors = %w[Red Blue Green Black White]
+  when "Dresses", "Kids"
+    sizes  = %w[XS S M L]
+    colors = %w[Pink Yellow Blue]
+  else
+    sizes  = %w[One-Size]
+    colors = %w[Default]
   end
-
-  # Assign product to collections
-  product.collections << category.collection
-  product.collections << all_products
-
-  # ---------------------------------------------------
-  # Variant options
-  # ---------------------------------------------------
-  sizes  = %w[S M L]
-  colors = %w[Red Blue Black]
-
-  size_options = sizes.map do |size|
-    ProductVariantOption.create!(
-      product: product,
+ 
+  # Create size variants
+  sizes.each do |size|
+    product.product_variants.find_or_create_by!(
       variant_type: "Size",
-      value: size,
-       price: rand(50..100),
-      compare_price: rand(101..150)
+      value: size
     )
   end
-
-  color_options = colors.map do |color|
-    ProductVariantOption.create!(
-      product: product,
+ 
+  # Create color variants
+  colors.each do |color|
+    product.product_variants.find_or_create_by!(
       variant_type: "Color",
-      value: color,
-      price: rand(50..100),
-      compare_price: rand(101..150)
+      value: color
     )
   end
-
-  # ---------------------------------------------------
-  # Variant combinations
-  # ---------------------------------------------------
-  size_options.each do |size|
-    color_options.each do |color|
-      combination = ProductVariantCombination.create!(
-        product: product,
-        sku: "SKU-#{product.id}-#{size.value}-#{color.value}",
-        stock: rand(5..20),
-        price: rand(50..100)
-      )
-
-      ProductVariantCombinationOption.create!(
-        product_variant_combination: combination,
-        product_variant_option: size
-      )
-
-      ProductVariantCombinationOption.create!(
-        product_variant_combination: combination,
-        product_variant_option: color
-      )
-    end
+ 
+  # --- STEP 2: Generate all combinations ---
+  groups = product.product_variants.group_by(&:variant_type).values
+ 
+  # Skip if no variants
+  next if groups.empty?
+ 
+  # Optionally, remove old combinations if you want to regenerate
+  # product.product_variant_combinations.destroy_all
+ 
+  # Generate all combinations
+  groups.shift.product(*groups).each do |variant_set|
+    pvc = product.product_variant_combinations.create!(
+      price: rand(20..100),         # random price for demo
+      compared_price: rand(101..150), # optional
+      stock_qunatity: rand(5..20)    # random stock for demo
+    )
+ 
+    # Attach the variants to the combination
+    pvc.product_variants << variant_set
+    puts "Created combination: #{pvc.sku} → #{variant_set.map(&:value).join(', ')}"
   end
+ 
+  puts "Done with #{product.name}"
 end
-
-puts "Seeding completed successfully ✅"
-puts "Database seeded with collections , categories , products and variants"

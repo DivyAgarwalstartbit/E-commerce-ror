@@ -1,24 +1,4 @@
-<!DOCTYPE html>
-<html lang="zxx">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="description" content="Ashion Template">
-    <meta name="keywords" content="Ashion, unica, creative, html">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Ashion | Template</title>
-
-    <!-- Google Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Cookie&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <!-- Rails Assets -->
-    <%= stylesheet_link_tag 'application', media: 'all' %>
-    <%= csrf_meta_tags %>
-    <%= csp_meta_tag %>
-</head>
-
-<body>
     <!-- Page Preloder -->
     <!-- Header Section End -->
 
@@ -102,15 +82,16 @@
                 <div class="range-slider">
                   <div class="price-input">
                     <p>Price:</p>
-                    <%= f.text_field :price_gteq,
-                        placeholder: "Min",
-                        class: "price-filter",
-                        value: params.dig(:q, :price_gteq) %>
+                    <%= f.text_field :product_variant_combinations_price_gteq,
+  placeholder: "Min Price",
+  class: "price-filter",
+  value: params.dig(:q, :product_variant_combinations_price_gteq) %>
 
-                    <%= f.text_field :price_lteq,
-                        placeholder: "Max",
-                        class: "price-filter",
-                        value: params.dig(:q, :price_lteq) %>
+<%= f.text_field :product_variant_combinations_price_lteq,
+  placeholder: "Max Price",
+  class: "price-filter",
+  value: params.dig(:q, :product_variant_combinations_price_lteq) %>
+
                   </div>
                 </div>
               </div>
@@ -157,79 +138,72 @@
 
       <!-- PRODUCTS GRID -->
       <div class="col-lg-9 col-md-9">
-        <div class="row" id="products-grid">
-          <% @products.each do |product| %>
-            <div class="col-lg-4 col-md-6 product-item">
-              <div class="product__item <%= 'sale' if product.product_variant_options.first.compare_price.present? && product.product_variant_options.first.compare_price > product.product_variant_options.first.price %>">
+  <div class="row" id="products-grid">
 
-                <div class="product__item__pic set-bg"
-                     data-setbg="<%= url_for(product.featured_image) if product.featured_image.attached? %>">
+    <% @products.each do |product| %>
+      <% variant = product.product_variant_combinations.first %>
 
-                  <% if product.product_variant_options.first.compare_price.present? && product.product_variant_options.first.compare_price > product.product_variant_options.first.price %>
-                    <div class="label">Sale</div>
-                  <% elsif product.created_at >= 7.days.ago %>
-                    <div class="label new">New</div>
-                  <% end %>
+      <div class="col-lg-4 col-md-6 product-item">
+        <div class="product__item">
 
-                  <ul class="product__hover">
-                    <% if product.featured_image.attached? %>
-                      <li>
-                        <a href="<%= url_for(product.featured_image) %>" class="image-popup">
-                          <span class="arrow_expand"></span>
-                        </a>
-                      </li>
-                    <% end %>
-                    <li><a href="#"><span class="icon_heart_alt"></span></a></li>
-                    <li><a href="#"><span class="icon_bag_alt"></span></a></li>
-                  </ul>
-                </div>
+          <div class="product__item__pic set-bg"
+               data-setbg="<%= url_for(product.featured_image) if product.featured_image&.attached? %>">
 
-                <div class="product__item__text">
-                  <h6>
-                    <%= link_to product.name, product_path(product) %>
-                  </h6>
+            <% if variant&.compared_price.present? && variant.compared_price > variant.price %>
+              <div class="label">Sale</div>
+            <% elsif product.created_at >= 7.days.ago %>
+              <div class="label new">New</div>
+            <% end %>
 
-                  <div class="rating">
-                    <% 5.times { %><i class="fa fa-star"></i><% } %>
-                  </div>
+            <ul class="product__hover">
+              <% if product.featured_image&.attached? %>
+                <li>
+                  <a href="<%= url_for(product.featured_image) %>" class="image-popup">
+                    <span class="arrow_expand"></span>
+                  </a>
+                </li>
+              <% end %>
+              <li><a href="#"><span class="icon_heart_alt"></span></a></li>
+              <li><a href="#"><span class="icon_bag_alt"></span></a></li>
+            </ul>
+          </div>
 
-                  <div class="product__price">
-                    $ <%= number_with_precision(product.product_variant_options.first.price, precision: 2) %>
-                    <% if product.product_variant_options.first.compare_price.present? && product.product_variant_options.first.compare_price > product.product_variant_options.first.price %>
-                      <span>$ <%= number_with_precision(product.product_variant_options.first.compare_price, precision: 2) %></span>
-                    <% end %>
-                  </div>
-                </div>
+          <div class="product__item__text">
+            <h6><%= link_to product.name, product_path(product) %></h6>
 
-              </div>
+            <div class="rating">
+              <% 5.times do %>
+                <i class="fa fa-star"></i>
+              <% end %>
             </div>
-          <% end %>
+
+            <% if variant.present? %>
+              <div class="product__price">
+                $ <%= number_with_precision(variant.price, precision: 2) %>
+
+                <% if variant.compared_price.present? && variant.compared_price > variant.price %>
+                  <span>$ <%= number_with_precision(variant.compared_price, precision: 2) %></span>
+                <% end %>
+              </div>
+            <% else %>
+              <div class="product__price">Price not available</div>
+            <% end %>
+
+          </div>
         </div>
       </div>
+    <% end %>
+
+  </div>
+</div>
+
 
     </div>
   </div>
 </section>
 
 
-    <!-- Shop Section End -->
-
-    <!-- Instagram Begin -->
     
-    <!-- Footer Section End -->
-
-    <!-- Search Begin -->
-    <div class="search-model">
-        <div class="h-100 d-flex align-items-center justify-content-center">
-            <div class="search-close-switch">+</div>
-            <form class="search-model-form">
-                <input type="text" id="search-input" placeholder="Search here.....">
-            </form>
-        </div>
-    </div>
-    <!-- Search End -->
-
-    <!-- Collection Filter Script -->
     <script>
    
   document.querySelectorAll(
@@ -238,8 +212,4 @@
     el.addEventListener('change', () => el.form.submit())
   })
     </script>
-    <!-- Collection Filter Script End -->
-
-</body>
-
-</html>
+   

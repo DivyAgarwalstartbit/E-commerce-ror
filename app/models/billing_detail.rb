@@ -1,7 +1,15 @@
 class BillingDetail < ApplicationRecord
-  belongs_to :order
+    belongs_to :user , foreign_key: :users_id
+    has_many :orders
 
-  # Validations
-  validates :first_name, :last_name, :email, :street_address, :city, :country, presence: true
-  validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }
+    validates :first_name , presence: true
+    validates :last_name , presence: true
+    validates :street_address , presence: true 
+    validates :city , presence: true
+    validates :state , presence: true 
+    validates :email , presence: true 
+    validates :phone_number , presence:true 
+    validates :country , presence: true 
+    validates :postal_code , presence: true 
+    
 end

@@ -1,0 +1,19 @@
+<!-- app/views/admins/collections/show.html.erb -->
+<h1><%= @collection.name %></h1>
+<p><%= @collection.description %></p>
+
+<h2>Categories</h2>
+<ul>
+  <% @categories.each do |category| %>
+    <li><%= category.name %></li>
+  <% end %>
+</ul>
+
+<h2>Products</h2>
+<ul>
+  <% @products.each do |product| %>
+    <li><%= link_to product.name, admins_product_path(product) rescue product.name %></li>
+  <% end %>
+</ul>
+
+<%= link_to 'Back', admins_collections_path, class: 'btn btn-secondary' %>

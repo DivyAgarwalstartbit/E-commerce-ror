@@ -1,19 +1,37 @@
 class Cart < ApplicationRecord
   belongs_to :user, optional: true
-
   has_many :line_items, dependent: :destroy
   has_many :product_variant_combinations, through: :line_items
+  
+# app/models/cart.rb
 
-  # Add a variant combination to the cart
-  def add_variant(combination)
-    item = line_items.find_or_initialize_by(product_variant_combination: combination)
-    item.quantity = (item.quantity || 0) + 1
-    item.price = combination.price
-    item.save!
+  def merge!(guest_cart)
+    return if guest_cart.blank?
+
+    guest_cart.line_items.each do |guest_item|
+      existing_item = line_items.find_by(
+        product_variant_combination_id: guest_item.product_variant_combination_id
+      )
+
+      if existing_item
+        existing_item.quantity += guest_item.quantity
+        existing_item.save!
+      else
+        line_items.create!(
+          product_variant_combination_id: guest_item.product_variant_combination_id,
+          quantity: guest_item.quantity
+        )
+      end
+    end
+
+    guest_cart.destroy
   end
 
-  # Calculate total cart amount
+
   def total_amount
-    line_items.sum('quantity * price')
+    line_items.includes(:product_variant_combination).sum do |item|
+      item.quantity * item.product_variant_combination.price
+    end
   end
+
 end

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>ECommerce</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    <meta charset="UTF-8">
+    <meta name="description" content="Ashion Template">
+    <meta name="keywords" content="Ashion, unica, creative, html">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Ashion | Template</title>
+    <%= favicon_link_tag 'online-shopping.png', type: 'image/png' %>
+    <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+    <%= javascript_pack_tag 'application', 'data-turbolinks-track': 'reload' %>
+     <link href="https://fonts.googleapis.com/css2?family=Cookie&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap"
+    rel="stylesheet">
+  </head>
+
+  <body>
+    <div id="preloder">
+        <div class="loader"></div>
+    </div>
+
+    <!-- Offcanvas Menu Begin -->
+    <div class="offcanvas-menu-overlay"></div>
+    <div class="offcanvas-menu-wrapper">
+        <div class="offcanvas__close">+</div>
+        <ul class="offcanvas__widget">
+            <li><span class="icon_search search-switch"></span></li>
+            <li>
+    
+  </li>
+
+  <!-- Cart -->
+  <li>
+    
+  </li>
+        </ul>
+        <div class="offcanvas__logo">
+            <a href="./index.html"><img src="img/logo.png" alt=""></a>
+        </div>
+        <div id="mobile-menu-wrap"></div>
+        <div class="offcanvas__auth">
+            <% if user_signed_in? %>
+  <%= link_to "Logout", destroy_user_session_path, method: :delete, class: "logout-link" %>
+<% else %>
+  <%= link_to "Login", new_user_session_path, class: "login-link" %>
+  <%= link_to "Register", new_user_registration_path, class: "register-link" %>
+<% end %>
+        </div>
+    </div>
+ <header class="header">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-xl-3 col-lg-2">
+                    <div class="header__logo">
+                     <%= link_to admins_root_path do %>
+                        <%= image_tag 'logo.png', alt: 'Logo' %>
+                        <% end%>
+                    </div>
+                </div>
+                <div class="col-xl-6 col-lg-7">
+                    <nav class="header__menu">
+                         <ul>
+                            <li class="<%= 'active' if current_page?(admins_root_path) %>"> <%= link_to "Dashboard", admins_root_path %></li>
+                            <li class="<%= 'active' if current_page?(admins_orders_path) %>"><%= link_to "Orders", admins_orders_path %></li>
+                            <li class="<%= 'active' if current_page?(admins_products_path) %>"><%= link_to "Products", admins_products_path %>
+                                <ul class="dropdown">
+                                    <li><a href="./shop-cart.html">Collections</a></li>
+                                    <li><a href="./checkout.html">Categories</a></li>
+                                </ul>
+                            </li> 
+                            <li class="<%= 'active' if current_page?(admins_customers_path) %>"><%= link_to "Customers", admins_customers_path %></li>
+                            <li><a>Payments</a></li>
+                        </ul>
+                    </nav>
+                </div>
+                <div class="col-lg-3">
+                    <div class="header__right">
+                        <div class="header__right__auth">
+                         <% if admin_signed_in? %>
+  <%= link_to "Logout",
+      destroy_admin_session_path,
+      method: :delete,
+      class: "logout-link" %>
+<% else %>
+  <%= link_to "Login",
+      new_admin_session_path,
+      class: "login-link" %>
+<% end %>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="canvas__open">
+                <i class="fa fa-bars"></i>
+            </div>
+        </div>
+    </header>
+
+    <%= yield %>
+
+    <script>
+
+    </script>
+ </body>
+</html>

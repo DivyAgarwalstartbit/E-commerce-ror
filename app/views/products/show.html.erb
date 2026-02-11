@@ -1,7 +1,4 @@
-
-  
-    <!-- Breadcrumb Begin -->
-    <div class="breadcrumb-option">
+ <div class="breadcrumb-option">
         <div class="container">
             <div class="row">
                 <div class="col-lg-12">
@@ -48,12 +45,18 @@
             <span>( 138 reviews )</span>
           </div>
 
-          <div class="product__details__price">
-            $ <%= @product.product_variant_options.first.price %>
-            <% if @product.product_variant_options.first.compare_price.present? && @product.product_variant_options.first.compare_price > @product.product_variant_options.first.price %>
-              <span>$ <%= @product.product_variant_options.first.compare_price %></span>
+          <% default_combination = @variant_combinations.first %>
+
+         <div class="product__details__price">
+          $ <div id="product-price" style="display:inline"><%= default_combination.price %></div>
+
+          <span id="compared-price">
+            <% if default_combination.compared_price.present? &&
+                  default_combination.compared_price > default_combination.price %>
+              $ <%= default_combination.compared_price %>
             <% end %>
-          </div>
+          </span>
+        </div>
 
           <p><%= @product.short_description %></p>
 
@@ -68,19 +71,24 @@
               </div>
 
               <!-- Hidden field for variant -->
-              <%= f.hidden_field :product_variant_combination_id, id: "selected-variant-id" %>
+             <%= f.hidden_field :product_variant_combination_id,
+      id: "selected-variant-id",
+      value: default_combination.id %>
+
 
               <%= f.submit "Add to cart", class: "cart-btn" %>
-
+<% end %>
               <ul>
                 <li>
-                  <button type="button" id="wishlist-btn" class="icon_heart_alt wishlist-btn">
-                    <span class="icon_heart_alt"></span>
-                  </button>
+               
+  <%= button_to wishlist_items_path(product_id: @product.id), method: :post, class: "icon_heart_alt wishlist-btn" do %>
+    
+  <% end %>
+
                 </li>
                 <li><a href="#"><span class="icon_adjust-horiz"></span></a></li>
               </ul>
-            <% end %>
+            
           </div>
 
           <!-- Product Variants -->
@@ -89,7 +97,7 @@
               <li>
                 <span>Available color:</span>
                 <div class="color__checkbox">
-                  <% @variant_options.where(variant_type: "Color").each do |option| %>
+                  <% (@variant_options["Color"] || []).each do |option| %>
                     <label>
                       <input type="radio" name="color" value="<%= option.id %>" class="variant-option" data-type="Color">
                       <span class="checkmark <%= option.value.downcase %>-bg"></span>
@@ -97,11 +105,11 @@
                   <% end %>
                 </div>
               </li>
-
+              
               <li>
                 <span>Available size:</span>
                 <div class="size__btn">
-                  <% @variant_options.where(variant_type: "Size").each do |option| %>
+                  <% (@variant_options["Size"] || []).each do |option| %>
                     <label>
                       <input type="radio" name="size" value="<%= option.id %>" class="variant-option" data-type="Size">
                       <%= option.value %>
@@ -109,7 +117,6 @@
                   <% end %>
                 </div>
               </li>
-
               <li>
                 <span>Promotions:</span>
                 <p>Free shipping</p>
@@ -159,21 +166,9 @@
 
       <% @related_products.each do |product| %>
         <div class="col-lg-4 col-md-6">
-          <div class="product__item <%= 'sale' if product.compare_price.present? && product.compare_price > product.price %>">
+         
             <div class="product__item__pic set-bg" data-setbg="<%= url_for(product.featured_image) if product.featured_image.attached? %>">
-              <% if product.compare_price.present? && product.compare_price > product.price %>
-                <div class="label">Sale</div>
-              <% elsif product.created_at >= 7.days.ago %>
-                <div class="label new">New</div>
-              <% elsif product.product_variants.sum(:in_stock) == 0 %>
-                <div class="label stockout stockblue">Out Of Stock</div>
-              <% end %>
-
-              <ul class="product__hover">
-                <li><a href="<%= url_for(product.featured_image) %>" class="image-popup"><span class="arrow_expand"></span></a></li>
-                <li><a href="#"><span class="icon_heart_alt"></span></a></li>
-                <li><a href="#"><span class="icon_bag_alt"></span></a></li>
-              </ul>
+            
             </div>
 
             <div class="product__item__text">
@@ -183,12 +178,17 @@
                   <i class="fa fa-star"></i>
                 <% end %>
               </div>
-              <div class="product__price">
-                $ <%= product.price %>
-                <% if product.compare_price.present? && product.compare_price > product.price %>
-                  <span>$ <%= product.compare_price %></span>
-                <% end %>
-              </div>
+              <% combo = product.product_variant_combinations.first %>
+
+<div class="product__price">
+ $ <%= combo.price if combo %>
+
+  <% if combo&.compared_price.present? &&
+        combo.compared_price > combo.price %>
+    <span>$ <%= combo.compared_price %></span>
+  <% end %>
+</div>
+
             </div>
           </div>
         </div>
@@ -197,132 +197,59 @@
     </div>
   </div>
 </section>
-    <!-- Product Details Section End -->
-
-    <!-- Instagram Begin -->
-    <!-- Footer Section End -->
-
-    <!-- Search Begin -->
-    <div class="search-model">
-        <div class="h-100 d-flex align-items-center justify-content-center">
-            <div class="search-close-switch">+</div>
-            <form class="search-model-form">
-                <input type="text" id="search-input" placeholder="Search here.....">
-            </form>
-        </div>
-    </div>
-    <!-- Search End -->
-
-   <script>
-  window.variantMapping = <%= @variant_combinations.each_with_object({}) do |comb, h| 
-    size = comb.product_variant_options.find_by(variant_type: "Size")&.id
-    color = comb.product_variant_options.find_by(variant_type: "Color")&.id
-    h["#{size}-#{color}"] = comb.id if size && color
-  end.to_json.html_safe %>;
-</script>
 
 <script>
-document.addEventListener("DOMContentLoaded", function() {
-  const variantInputs = document.querySelectorAll(".variant-option");
-  const selectedVariantField = document.getElementById("selected-variant-id");
 
-  function updateSelectedVariant() {
-    const selectedSize = document.querySelector('input[name="size"]:checked')?.value;
-    const selectedColor = document.querySelector('input[name="color"]:checked')?.value;
-    if (selectedSize && selectedColor) {
-      const combinationId = window.variantMapping[selectedSize + "-" + selectedColor];
-      selectedVariantField.value = combinationId;
+  window.variantCombinations = <%= raw @variant_combinations.to_json(
+    only: [:id, :price, :compared_price],
+    include: {
+      product_variants: {
+        only: [:id],
+        methods: [:variant_type]
+      }
     }
-  }
+  ) %>;
+  </script>
 
-  variantInputs.forEach(input => {
-    input.addEventListener("change", updateSelectedVariant);
-  });
-});
-</script>
+  <script>
 
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-  const wishlistBtn = document.getElementById("wishlist-btn");
-  const productId = <%= @product.id %>;
 
-  // Check if product is already in wishlist
-  function checkWishlistStatus() {
-    fetch(`/wishlists/check?product_id=${productId}`, {
-      method: "GET",
-      headers: {
-        "X-Requested-With": "XMLHttpRequest",
-        "Accept": "application/json"
-      }
-    })
-    .then(response => response.json())
-    .then(data => {
-      if (data.in_wishlist) {
-        wishlistBtn.classList.add("active");
-      } else {
-        wishlistBtn.classList.remove("active");
-      }
-    })
-    .catch(error => console.error("Error checking wishlist:", error));
-  }
+document.addEventListener("turbolinks:load", () => {
+  const selectedOptions = {};
 
-  // Check status on load
-  checkWishlistStatus();
-
-  // Handle wishlist button click
-  wishlistBtn.addEventListener("click", function(e) {
-    e.preventDefault();
-
-    const selectedVariantId = document.getElementById("selected-variant-id").value;
-    
-    if (!selectedVariantId) {
-      alert("Please select a variant before adding to wishlist");
-      return;
-    }
-
-    const action = wishlistBtn.classList.contains("active") ? "remove" : "add";
-    const url = action === "add" ? "/wishlists" : `/wishlists/${productId}`;
-    const method = action === "add" ? "POST" : "DELETE";
-
-    fetch(url, {
-      method: method,
-      headers: {
-        "X-Requested-With": "XMLHttpRequest",
-        "Accept": "application/json",
-        "Content-Type": "application/json",
-        "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]').content
-      },
-      body: JSON.stringify({
-        product_variant_combination_id: selectedVariantId
-      })
-    })
-    .then(response => {
-      console.log("Response status:", response.status);
-      if (response.ok || response.status === 204 || response.status === 200) {
-        return response.status === 204 ? { success: true } : response.json().catch(() => ({ success: true }));
-      }
-      return response.json().then(data => Promise.reject(data));
-    })
-    .then(data => {
-      console.log("Response data:", data);
-      wishlistBtn.classList.toggle("active");
-      const message = action === "add" 
-        ? "Added to wishlist! Would you like to view your wishlist?" 
-        : "Removed from wishlist!";
-      
-      if (action === "add") {
-        if (confirm(message)) {
-          window.location.href = "/wishlists";
-        }
-      } else {
-        alert(message);
-      }
-    })
-    .catch(error => {
-      console.error("Error:", error);
-      alert(error.message || "Error updating wishlist");
+  document.querySelectorAll(".variant-option").forEach(input => {
+    input.addEventListener("change", () => {
+      selectedOptions[input.dataset.type] = parseInt(input.value);
+      updateVariant();
     });
   });
-});
-</script>
 
+  function updateVariant() {
+    const optionIds = Object.values(selectedOptions);
+
+    // Require all options (Color + Size)
+    if (optionIds.length < 2) return;
+
+    const match = window.variantCombinations.find(combination => {
+      const comboOptionIds = combination.product_variants.map(o => o.id);
+      return optionIds.every(id => comboOptionIds.includes(id));
+    });
+
+    if (!match) return;
+
+    // Update price
+    document.getElementById("product-price").innerText = match.price;
+
+    const compared = document.getElementById("compared-price");
+    
+      compared.innerText = `$ ${match.compared_price}`;
+      compared.style.display = "inline";
+   
+    // Update hidden variant ID
+    document.getElementById("selected-variant-id").value = match.id;
+  }
+});
+
+
+
+</script>

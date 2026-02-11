@@ -23,6 +23,15 @@ gem 'jbuilder', '~> 2.7'
 gem 'bcrypt', '~> 3.1.7'
 gem 'active_storage_validations'
 gem "ransack"
+gem "cloudinary"
+gem "activestorage-cloudinary-service"
+# For OAuth support with Devise
+gem 'omniauth'
+gem 'omniauth-google-oauth2'
+gem 'omniauth-facebook'
+gem 'stripe'
+gem "ransack"
+
 # Gemfile
 gem 'dotenv-rails', groups: [:development, :test]
 
@@ -63,4 +72,4 @@ end
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
-gem "devise", "~> 4.9"
+ gem "devise", "~> 4.9"

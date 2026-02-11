@@ -1,0 +1,246 @@
+<div class="invoice-wrapper">
+
+  <!-- Top Header -->
+  <div class="invoice-top">
+    <div>
+      <h2>Order #<%= @order.id %></h2>
+      <p>Placed on <%= @order.created_at.strftime("%d %b %Y, %I:%M %p") %></p>
+    </div>
+
+    <span class="order-badge badge-<%= @order.status %>">
+      <%= @order.status.capitalize %>
+    </span>
+  </div>
+
+
+  <!-- Customer & Address -->
+  <div class="invoice-grid">
+
+    <div class="invoice-card">
+      <h4>Customer</h4>
+      <p><strong><%= @order.billing_detail.first_name %> <%= @order.billing_detail.last_name %></strong></p>
+      <p><%= @order.billing_detail.email %></p>
+      <p><%= @order.billing_detail.phone_number %></p>
+    </div>
+
+    <div class="invoice-card">
+      <h4>Shipping Address</h4>
+      <p>
+        <%= @order.billing_detail.street_address %>, <%= @order.billing_detail.apartment_name %><br>
+        <%= @order.billing_detail.city %>, <%= @order.billing_detail.state %><br>
+        <%= @order.billing_detail.country %> - <%= @order.billing_detail.postal_code %>
+      </p>
+    </div>
+
+  </div>
+
+
+  <!-- Products Table -->
+  <div class="invoice-card">
+    <h4>Order Items</h4>
+
+    <table class="invoice-table">
+      <thead>
+        <tr>
+          <th>Product</th>
+          <th>Variant</th>
+          <th>Price</th>
+          <th>Qty</th>
+          <th>Total</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <% @order.line_items.each do |item| %>
+          <tr>
+            <td><%= item.product_variant_combination.product.name %></td>
+            <td><%= item.product_variant_combination.product_variants.map(&:value).join(" / ") rescue "-" %></td>
+            <td>$<%= item.product_variant_combination.price %></td>
+            <td><%= item.quantity %></td>
+            <td>$<%= item.quantity * item.product_variant_combination.price %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+
+
+  <!-- Total + Status Update -->
+  <div class="invoice-footer">
+
+    <div class="invoice-total-box">
+      <p>Subtotal</p>
+      <h3>$<%= @order.total_price %></h3>
+    </div>
+
+    <div class="invoice-status-update">
+      <h4>Update Status</h4>
+
+      <%= form_with model: [:admins, @order], local: true do |f| %>
+        <%= f.select :status,
+          ["placed", "on_the_way", "delivered", "cancelled"],
+    
+          {}, class: "invoice-select" %>
+
+        <button class="invoice-btn">Update</button>
+      <% end %>
+    </div>
+
+  </div>
+
+</div>
+
+
+<style>
+.invoice-wrapper {
+  max-width: 1100px;
+  margin: 30px auto;
+  font-family: Inter, sans-serif;
+  color: #1f2937;
+}
+
+/* Header */
+.invoice-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #ffffff;
+  padding: 20px 25px;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+}
+
+.invoice-top h2 {
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.invoice-top p {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+/* Status Badges */
+.order-badge {
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.badge-placed { background: #e0f2fe; color: #0369a1; }
+.badge-processing { background: #fef3c7; color: #92400e; }
+.badge-on_the_way { background: #dcfce7; color: #166534; }
+.badge-delivered { background: #d1fae5; color: #065f46; }
+.badge-cancelled { background: #fee2e2; color: #991b1b; }
+
+/* Grid Cards */
+.invoice-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin-top: 15px;
+}
+
+.invoice-card {
+  background: #ffffff;
+  padding: 18px 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+}
+
+.invoice-card h4 {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 10px;
+  color: #111827;
+}
+
+.invoice-card p {
+  font-size: 14px;
+  color: #374151;
+  line-height: 1.6;
+}
+
+/* Table */
+.invoice-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+.invoice-table th {
+  text-align: left;
+  padding: 12px;
+  background: #f9fafb;
+  font-weight: 600;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.invoice-table td {
+  padding: 12px;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+/* Footer */
+.invoice-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-top: 20px;
+}
+
+/* Total Box */
+.invoice-total-box {
+  background: #2563eb;
+  color: white;
+  padding: 18px 25px;
+  border-radius: 12px;
+  min-width: 250px;
+}
+
+.invoice-total-box p {
+  font-size: 13px;
+  color: #9ca3af;
+}
+
+.invoice-total-box h3 {
+  font-size: 26px;
+  font-weight: 700;
+}
+
+/* Status Update Box */
+.invoice-status-update {
+  background: white;
+  padding: 18px 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+  width: 260px;
+}
+
+.invoice-select {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  font-size: 14px;
+}
+
+.invoice-btn {
+  width: 100%;
+  margin-top: 10px;
+  padding: 10px;
+  background: #2563eb;
+  color: white;
+  border-radius: 8px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.invoice-btn:hover {
+  background: #1d4ed8;
+}
+
+</style>

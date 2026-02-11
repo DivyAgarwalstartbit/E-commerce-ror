@@ -1,2 +1,0 @@
-class ProductVariantsController < ApplicationController
-end

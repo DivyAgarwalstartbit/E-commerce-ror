@@ -1,6 +1,6 @@
 class Category < ApplicationRecord
-  belongs_to :collection, optional: true
+    has_many :products
+    belongs_to :collection
 
-  validates :name, presence: true, length: { maximum: 50 }
-  validates :gender, presence: true, inclusion: { in: %w[Mens Womens Kids] }
+    validates :name , presence:true 
 end

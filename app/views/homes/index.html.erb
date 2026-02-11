@@ -1,0 +1,335 @@
+<section class="categories">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-6 p-0">
+                    <div class="categories__item categories__large__item set-bg"
+                    data-setbg="<%= asset_path('categories/category-1.jpg') %>">
+                    <div class="categories__text">
+                        <h1>Women’s fashion</h1>
+                        <% collection = Collection.find_by(name: "Womens") %>
+                               <p><%= collection.description %></p>
+                               <%= link_to "shop now", collection_path(collection.id) %>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="row">
+                    <div class="col-lg-6 col-md-6 col-sm-6 p-0">
+                        <div class="categories__item set-bg" data-setbg="<%= asset_path('categories/category-2.jpg') %>">
+                            <div class="categories__text">
+                                <h4>Men’s fashion</h4>
+                                <% collection = Collection.find_by(name: "Mens") %>
+                                <p><%= collection.products.count %> items</p>
+                               <%= link_to "shop now", collection_path(collection.id) %>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-6 p-0">
+                        <div class="categories__item set-bg" data-setbg="<%= asset_path('categories/category-3.jpg') %>">
+                            <div class="categories__text">
+                                <h4>Kid’s fashion</h4>
+                                <% collection = Collection.find_by(name: "Kids") %>
+                                <p><%= collection.products.count %> items</p>
+                               <%= link_to "shop now", collection_path(collection.id) %>
+                              
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-6 p-0">
+                        <div class="categories__item set-bg" data-setbg="<%= asset_path('categories/category-4.jpg') %>">
+                            <div class="categories__text">
+                                <h4>Cosmetics</h4>
+                                <p>159 items</p>
+                                <a href="#">Shop now</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-6 p-0">
+                        <div class="categories__item set-bg" data-setbg="<%= asset_path('categories/category-5.jpg') %>">
+                            <div class="categories__text">
+                                <h4>Accessories</h4>
+                                <p>792 items</p>
+                                <a href="#">Shop now</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Categories Section End -->
+
+<!-- Product Section Begin -->
+<section class="product spad">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-4 col-md-4">
+                <div class="section-title">
+                    <h4>New product</h4>
+                </div>
+            </div>
+            <div class="col-lg-8 col-md-8">
+                <ul class="filter__controls">
+                    <li class="active" data-filter="*">All</li>
+                    <li data-filter=".women">Women’s</li>
+                    <li data-filter=".men">Men’s</li>
+                    <li data-filter=".kid">Kid’s</li>
+                    <li data-filter=".accessories">Accessories</li>
+                    <li data-filter=".cosmetic">Cosmetics</li>
+                </ul>
+            </div>
+        </div>
+       <div class="row property__gallery">
+      <% @all_products.each do |product| %>
+        <% css_classes = ["mix" , "trend"] %>
+        <% product.collections.each do |c| %>
+          <% css_classes << c.name.downcase.singularize %>
+        <% end %>
+
+        <div class="col-lg-3 col-md-4 col-sm-6 <%= css_classes.join(" ") %>">
+          <div class="product__item">
+            <div class="product__item__pic set-bg" data-setbg="<%= url_for(product.featured_image) if product.featured_image.attached? %>">
+              <div class="label new">New</div>
+              <ul class="product__hover">
+                <li>
+                  <a href="<%= url_for(product.featured_image) if product.featured_image.attached? %>" class="image-popup">
+                    <span class="arrow_expand"></span>
+                  </a>
+                </li>
+
+                
+ <li>
+    <a  class="wishlist-btn" data-product-id="<%= product.id %>">
+      <span class="icon_heart_alt"></span>
+    </a>
+  </li>
+
+  <!-- Add to cart -->
+  <li>
+    <a  class="add-to-cart-btn" data-variant-id="<%= product.default_variant_combination.id %>">
+      <span class="icon_bag_alt"></span>
+    </a>
+  </li>
+                <%# Wishlist button %>
+               
+                <%# Add to cart button %>
+            
+              </ul>
+            </div>
+
+            <div class="product__item__text">
+              <h6><%= link_to product.name, product_path(product) %>
+</h6>
+              <div class="rating">
+                <% 5.times do %>
+                  <i class="fa fa-star"></i>
+                <% end %>
+              </div>
+             
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</section>
+<!-- Product Section End -->
+
+<!-- Banner Section Begin -->
+<section class="banner set-bg" data-setbg="<%= asset_path('banner/banner-1.jpg') %>">
+    <div class="container">
+        <div class="row">
+            <div class="col-xl-7 col-lg-8 m-auto">
+                <div class="banner__slider owl-carousel">
+                    <div class="banner__item">
+                        <div class="banner__text">
+                            <span>The Chloe Collection</span>
+                            <h1>The Project Jacket</h1>
+                            <a href="#">Shop now</a>
+                        </div>
+                    </div>
+                    <div class="banner__item">
+                        <div class="banner__text">
+                            <span>The Chloe Collection</span>
+                            <h1>The Project Jacket</h1>
+                            <a href="#">Shop now</a>
+                        </div>
+                    </div>
+                    <div class="banner__item">
+                        <div class="banner__text">
+                            <span>The Chloe Collection</span>
+                            <h1>The Project Jacket</h1>
+                            <a href="#">Shop now</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Banner Section End -->
+
+<!-- Trend Section Begin -->
+<section class="trend spad">
+  <div class="container">
+    <div class="row">
+
+      <% { "Hot Trends" => @hot_trends_products,
+           "Best Seller" => @best_seller_products,
+           "Feature" => @feature_products }.each do |title, products| %>
+
+        <div class="col-lg-4 col-md-4 col-sm-6">
+          <div class="trend__content">
+            <div class="section-title">
+              <h4><%= title %></h4>
+            </div>
+
+            <% products.each do |product| %>
+             <%= render "homes/trend_item", product: product %>
+            <% end %>
+
+          </div>
+        </div>
+
+      <% end %>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- Trend Section End -->
+
+<!-- Discount Section Begin -->
+<section class="discount">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6 p-0">
+                <div class="discount__pic">
+                    <img src="<%= image_path('discount.jpg') %>" alt="">
+                </div>
+            </div>
+            <div class="col-lg-6 p-0">
+                <div class="discount__text">
+                    <div class="discount__text__title">
+                        <span>Discount</span>
+                        <h2>Summer 2019</h2>
+                        <h5><span>Sale</span> 50%</h5>
+                    </div>
+                    <div class="discount__countdown" id="countdown-time">
+                        <div class="countdown__item">
+                            <span>22</span>
+                            <p>Days</p>
+                        </div>
+                        <div class="countdown__item">
+                            <span>18</span>
+                            <p>Hour</p>
+                        </div>
+                        <div class="countdown__item">
+                            <span>46</span>
+                            <p>Min</p>
+                        </div>
+                        <div class="countdown__item">
+                            <span>05</span>
+                            <p>Sec</p>
+                        </div>
+                    </div>
+                    <a href="#">Shop now</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Discount Section End -->
+
+<!-- Services Section Begin -->
+<section class="services spad">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="services__item">
+                    <i class="fa fa-car"></i>
+                    <h6>Free Shipping</h6>
+                    <p>For all oder over $99</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="services__item">
+                    <i class="fa fa-money"></i>
+                    <h6>Money Back Guarantee</h6>
+                    <p>If good have Problems</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="services__item">
+                    <i class="fa fa-support"></i>
+                    <h6>Online Support 24/7</h6>
+                    <p>Dedicated support</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="services__item">
+                    <i class="fa fa-headphones"></i>
+                    <h6>Payment Secure</h6>
+                    <p>100% secure payment</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+document.addEventListener("turbolinks:load", () => {
+
+  // Add to Cart
+  document.querySelectorAll(".add-to-cart-btn").forEach(btn => {
+    btn.addEventListener("click", e => {
+      e.preventDefault();
+      const variantId = btn.dataset.variantId;
+      
+      fetch("/line_items", {
+        method: "POST",
+        headers: {
+          "X-CSRF-Token": document.querySelector("meta[name=csrf-token]").content,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ quantity: 1, product_variant_combination_id: variantId })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          alert("Added to cart 🛒");
+          document.getElementById("cart-count").innerText = data.cart_count;
+        }
+      });
+    });
+  });
+
+
+  // Add to Wishlist
+  document.querySelectorAll(".wishlist-btn").forEach(btn => {
+    btn.addEventListener("click", e => {
+      e.preventDefault();
+      const productId = btn.dataset.productId;
+
+      fetch("/wishlist_items", {
+        method: "POST",
+        headers: {
+          "X-CSRF-Token": document.querySelector("meta[name=csrf-token]").content,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ product_id: productId })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          alert("Added to wishlist ❤️");
+        }
+      });
+    });
+  });
+
+});
+
+</script>

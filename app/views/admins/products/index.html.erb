@@ -1,0 +1,160 @@
+
+
+<style>
+.admin-products-page {
+  font-family: 'Montserrat', sans-serif;
+  padding: 30px;
+  background-color: #f9f9f9;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.page-header h2 {
+  font-size: 28px;
+  font-weight: 700;
+  color: #333;
+}
+
+.btn.btn-primary {
+  background-color: #008060;
+  color: #fff;
+  padding: 10px 25px;
+  border-radius: 25px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+.btn.btn-primary:hover {
+  background-color: #006644;
+}
+
+.products-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+}
+
+.products-table th, .products-table td {
+  padding: 15px 20px;
+  border-bottom: 1px solid #eee;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.products-table th {
+  background-color: #f5f5f5;
+  font-weight: 600;
+  font-size: 14px;
+  color: #555;
+}
+
+.products-table tbody tr:hover {
+  background-color: #f1f9f8;
+}
+
+.product-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.product-thumbnail {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 5px;
+}
+
+.actions .action-icon {
+  margin-right: 10px;
+  font-size: 18px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.actions .action-icon:hover {
+  transform: scale(1.2);
+}
+
+.actions .delete {
+  color: #e50914;
+}
+
+.actions .edit {
+  color: #007bff;
+}
+.clickable-row {
+  cursor: pointer;
+}
+
+.clickable-row:hover {
+  background-color: #f1f9f8;
+}
+
+</style>
+
+<div class="admin-products-page">
+  <div class="page-header">
+    <h2>All Products</h2>
+    <%= link_to "Create Product", new_admins_product_path, class: "btn btn-primary" %>
+  </div>
+
+  <table class="products-table">
+    <thead>
+      <tr>
+        <th><input type="checkbox" /></th>
+        <th>Product</th>
+        <th>Category</th>
+        <th>Inventory</th>
+    
+      </tr>
+    </thead>
+
+    <tbody>
+      <% @products.each do |product| %>
+  <tr class="clickable-row"
+      data-href="<%= edit_admins_product_path(product) %>">
+
+    <td><input type="checkbox" /></td>
+
+    <td class="product-info">
+      <% if product.featured_image.attached? %>
+        <%= image_tag product.featured_image, class: "product-thumbnail" %>
+      <% else %>
+        <%= image_tag "default-product.jpeg", class: "product-thumbnail" %>
+      <% end %>
+      <%= product.name %>
+    </td>
+
+    <td><%= product.category&.name %></td>
+    <td><%= product.product_variant_combinations.sum(:stock_qunatity) %></td>
+    <td><%= product.featured ? "Featured" : "" %></td>
+
+  </tr>
+<% end %>
+
+    </tbody>
+  </table>
+</div>
+
+<script>
+document.addEventListener("turbolinks:load", () => {
+  document.querySelectorAll(".clickable-row").forEach(row => {
+    row.addEventListener("click", () => {
+      window.location = row.dataset.href;
+    });
+  });
+});
+
+</script>
+      
+          

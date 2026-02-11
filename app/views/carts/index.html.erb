@@ -1,7 +1,4 @@
 
-
-
-   
     <div class="breadcrumb-option">
         <div class="container">
             <div class="row">
@@ -37,62 +34,48 @@
   <% if @line_items.any? %>
     <% @line_items.each do |item| %>
       <tr>
-       <td class="cart__product__item">
-        <div class="cart__product__item__image">
-    <% if item.product_variant_combination&.product&.featured_image&.attached? %>
-      <%= image_tag item.product_variant_combination.product.featured_image, 
-                    alt: item.product_variant_combination.product.name, 
-                    width: 100, height: 100 %>
-    <% else %>
-      <%= image_tag "default-product.jpeg", alt: "No image available", width: 100, height: 100 %>
-    <% end %>
-  </div>
-        
-  <div class="cart__product__item__title">
-    <% if item.product_variant_combination && item.product_variant_combination.product %>
-      <h6><%= item.product_variant_combination.product.name %></h6>
-      <% options = item.product_variant_combination.product_variant_options.map(&:value) %>
-    <% if options.any? %>
-      (<%= options.join(" / ") %>)
-    <% end %>
-    <% else %>
-      <h6>Product not available</h6>
-    <% end %>
-    <div class="rating">
-      <i class="fa fa-star"></i>
-      <i class="fa fa-star"></i>
-      <i class="fa fa-star"></i>
-      <i class="fa fa-star"></i>
-      <i class="fa fa-star"></i>
-    </div>
-  </div>
-</td>
-        <td class="cart__price">
-          <%= number_to_currency(item.price) %>
-        </td>
+        <td class="cart__product__item">
+          <div class="cart__product__item__image">
+            <% if item.product_variant_combination.product.featured_image.attached? %>
+              <%= image_tag item.product_variant_combination.product.featured_image, width: 100 %>
+            <% else %>
+              <%= image_tag "default-product.jpeg", width: 100 %>
+            <% end %>
+          </div>
 
-        <td class="cart__quantity">
-          <div class="pro-qty">
-            <input type="number" class="quantity-input" data-line-item-id="<%= item.id %>" data-price="<%= item.price %>" value="<%= item.quantity %>" min="1" />
+          <div class="cart__product__item__title">
+            <h6><%= item.product_variant_combination.product.name %></h6>
+            (<%= item.product_variant_combination.product_variants.map(&:value).join(" / ") %>)
           </div>
         </td>
 
-        <td class="cart__total">
-          <%= number_to_currency(item.quantity * item.price) %>
+        <td class="cart__price">
+          <%= number_to_currency(item.product_variant_combination.price) %>
         </td>
 
-        <td class="cart__close">
-          <button type="button" class="remove-cart-btn btn btn-danger btn-sm" data-line-item-id="<%= item.id %>" style="padding: 5px 10px; background-color: #d9534f; color: white; border: none; border-radius: 3px; cursor: pointer;">
-            Remove
-          </button>
+        <td class="cart__quantity">
+          <%= form_with model: item, url: line_item_path(item), method: :patch, local: true do |f| %>
+            <%= f.number_field :quantity, min: 1, value: item.quantity %>
+            <%= f.submit "Update", class: "btn btn-sm btn-primary" %>
+          <% end %>
+        </td>
+
+        <td class="cart__total">
+          <%= number_to_currency(item.quantity * item.product_variant_combination.price) %>
+        </td>
+
+        <td>
+          <%= button_to "Remove",
+                line_item_path(item),
+                method: :delete,
+                class: "btn btn-danger btn-sm",
+                data: { confirm: "Remove this item?" } %>
         </td>
       </tr>
     <% end %>
   <% else %>
     <tr>
-      <td colspan="5" class="text-center">
-        Your cart is empty
-      </td>
+      <td colspan="5" class="text-center">Your cart is empty</td>
     </tr>
   <% end %>
 </tbody>
@@ -115,7 +98,7 @@
     <div class="row">
       <div class="col-lg-4 offset-lg-8">
         <div class="cart__total__procced">
-          <h6>Cart total</h6>
+          <h6 style="border-bottom: 1px solid black;">Your Cart total</h6>
           <ul>
             <li>
               Subtotal
@@ -126,162 +109,106 @@
               <span id="cart-total"><%= number_to_currency(@cart.total_amount) %></span>
             </li>
           </ul>
-
-          <%= link_to "Proceed to checkout",
-              new_order_path,
-              class: "primary-btn" %>
+<% if @line_items.any? %>
+    <%= link_to "Select the Address", billing_details_path, class: "primary-btn" %>
+  <% else %>
+    <button class="primary-btn" disabled>Cart is Empty</button>
+  <% end %>
+          
         </div>
       </div>
     </div>
   </div>
 </section>
 
-  
-    <script>
-    document.addEventListener("DOMContentLoaded", function() {
-      const formatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
 
-      // Function to calculate and update cart totals
-      function updateCartTotals() {
-        let subtotal = 0;
-        const cartRows = document.querySelectorAll("tbody tr");
 
-        cartRows.forEach(row => {
-          const totalCell = row.querySelector(".cart__total");
-          if (totalCell && totalCell.textContent.trim() !== "" && !totalCell.textContent.includes("Your cart")) {
-            // Parse currency string and add to subtotal
-            const total = parseFloat(totalCell.textContent.replace(/[^\d.-]/g, ''));
-            if (!isNaN(total)) {
-              subtotal += total;
-            }
-          }
-        });
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  // Handle quantity changes
+  document.querySelectorAll(".quantity-input").forEach(input => {
+    input.addEventListener("change", updateQuantity)
+  });
 
-        // Update subtotal and total
-        const subtotalElement = document.getElementById("cart-subtotal");
-        const totalElement = document.getElementById("cart-total");
+  // Handle remove buttons
+  document.querySelectorAll(".remove-cart-btn").forEach(btn => {
+    btn.addEventListener("click", removeItem)
+  });
 
-        if (subtotalElement) {
-          subtotalElement.textContent = formatter.format(subtotal);
-        }
-        if (totalElement) {
-          totalElement.textContent = formatter.format(subtotal);
-        }
+  function updateQuantity(event) {
+    const input = event.target;
+    const tr = input.closest("tr");
+    const lineItemId = tr.dataset.lineItemId;
+    const quantity = parseInt(input.value);
 
-        console.log("Cart totals updated. Subtotal:", subtotal);
+    fetch(`/line_items/${lineItemId}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]').content
+      },
+      body: JSON.stringify({ line_item: { quantity: quantity } })
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        // Update row total
+        tr.querySelector("[data-cart-target='lineTotal']").innerText = data.line_item_total;
+        // Update cart totals
+        document.getElementById("cart-subtotal").innerText = data.cart_subtotal;
+        document.getElementById("cart-total").innerText = data.cart_total;
       }
+    })
+    .catch(err => console.error("Error updating quantity:", err));
+  }
 
-      // Handle quantity change
-      const quantityInputs = document.querySelectorAll(".quantity-input");
-      console.log("Quantity inputs found:", quantityInputs.length);
+  function removeItem(event) {
+    const btn = event.target;
+    const tr = btn.closest("tr");
+    const lineItemId = tr.dataset.lineItemId;
 
-      quantityInputs.forEach(input => {
-        input.addEventListener("change", function(e) {
-          const lineItemId = this.getAttribute("data-line-item-id");
-          const price = parseFloat(this.getAttribute("data-price"));
-          const newQuantity = parseInt(this.value);
-          const row = this.closest("tr");
-          const totalCell = row.querySelector(".cart__total");
+    fetch(`/line_items/${lineItemId}`, {
+      method: "DELETE",
+      headers: {
+        "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]').content
+      }
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        // Remove the row from table
+        tr.remove();
+        // Update cart totals
+        document.getElementById("cart-subtotal").innerText = data.cart_subtotal;
+        document.getElementById("cart-total").innerText = data.cart_total;
 
-          console.log("Updating quantity for line item:", lineItemId, "to:", newQuantity);
+        // If cart is empty, show empty message
+        if (data.cart_empty) {
+          const tbody = document.querySelector("tbody[data-controller='cart']");
+          tbody.innerHTML = `<tr><td colspan="5" class="text-center">Your cart is empty</td></tr>`;
+        }
+      }
+    })
+    .catch(err => console.error("Error removing item:", err));
+  }
+});
+</script>
 
-          const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+<style>
+.primary-btn {
+  display: block;
+  width: 100%;
+  text-align: center;
+  color: #fff;
+  padding: 12px;
+  border-radius: 5px;
+  font-weight: bold;
+  text-decoration: none;
+  transition: 0.3s;
+}
 
-          // Update the total price immediately
-          const newTotal = (price * newQuantity).toFixed(2);
-          const formatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
-          totalCell.textContent = formatter.format(newTotal);
+.primary-btn:hover {
+  background: #e23030ff;
+}
 
-          // Recalculate cart subtotal and total
-          updateCartTotals();
-
-          // Send update to server
-          fetch(`/line_items/${lineItemId}`, {
-            method: "PATCH",
-            headers: {
-              "X-Requested-With": "XMLHttpRequest",
-              "Accept": "application/json",
-              "Content-Type": "application/json",
-              "X-CSRF-Token": csrfToken
-            },
-            body: JSON.stringify({
-              line_item: {
-                quantity: newQuantity
-              }
-            })
-          })
-          .then(response => {
-            console.log("Update response status:", response.status);
-            if (response.ok) {
-              console.log("Quantity updated successfully");
-            } else {
-              alert("Error updating quantity");
-              location.reload();
-            }
-          })
-          .catch(error => {
-            console.error("Error:", error);
-            alert("Error updating quantity");
-            location.reload();
-          });
-        });
-      });
-
-      // Handle remove button
-      const removeButtons = document.querySelectorAll(".remove-cart-btn");
-      console.log("Remove buttons found:", removeButtons.length);
-
-      removeButtons.forEach(button => {
-        button.addEventListener("click", function(e) {
-          e.preventDefault();
-
-          const lineItemId = this.getAttribute("data-line-item-id");
-          const row = this.closest("tr");
-
-          if (confirm("Remove this item from your cart?")) {
-            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
-            console.log("Removing line item:", lineItemId);
-
-            fetch(`/line_items/${lineItemId}`, {
-              method: "DELETE",
-              headers: {
-                "X-Requested-With": "XMLHttpRequest",
-                "Accept": "application/json",
-                "Content-Type": "application/json",
-                "X-CSRF-Token": csrfToken
-              }
-            })
-            .then(response => {
-              console.log("Response status:", response.status);
-              if (response.ok || response.status === 200 || response.status === 204) {
-                // Success - remove the item
-                row.style.opacity = "0";
-                row.style.transition = "opacity 0.3s ease-out";
-                setTimeout(() => {
-                  row.remove();
-                  
-                  // Check if table is empty
-                  const tbody = document.querySelector("tbody");
-                  const rows = tbody.querySelectorAll("tr");
-                  
-                  if (rows.length === 0) {
-                    location.reload();
-                  }
-                }, 300);
-              } else {
-                alert("Error removing item");
-              }
-            })
-            .catch(error => {
-              console.error("Error:", error);
-              alert("Error removing item");
-            });
-          }
-        });
-      });
-    });
-    </script>
-    <!-- Cart Remove Script End -->
-
-    <!-- Js Plugins -->
-    
+</style>
