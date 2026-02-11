@@ -11,7 +11,7 @@ class DashboardsController < Admins::ApplicationController
                              .limit(5)
 
     @low_stock_products = ProductVariantCombination.where("stock_qunatity > 0 AND stock_qunatity <= 5")
-                                 .order(:stock)
+                                 .order(stock_qunatity: :asc)
                                  .limit(5)
   end
 end 
