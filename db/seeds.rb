@@ -1,9 +1,11 @@
 puts "Cleaning database..."
+WishlistItem.destroy_all     # references Product
+LineItem.destroy_all         # references ProductVariantCombination
 ProductVariantCombinationitem.destroy_all
-ProductVariantCombination.destroy_all
-ProductVariant.destroy_all
-Product.destroy_all
-Category.destroy_all
+ProductVariantCombination.destroy_all  # references Product
+ProductVariant.destroy_all   # references Product
+Product.destroy_all          # references Category
+Category.destroy_all         # references Collection
 Collection.destroy_all
 
 puts "Creating collections..."
