@@ -108,7 +108,8 @@
 <li>
 <%= link_to carts_path, class: "wishlist-link" do %>
     <span class="icon_bag_alt"></span>
-    <div class="tip"><%= current_user.cart.line_items.count %></div>
+    
+    <div class="tip"><%= current_cart.line_items.count %></div>
    
   <% end %>
 </li>
