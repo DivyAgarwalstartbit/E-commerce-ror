@@ -100,7 +100,7 @@
   <%= link_to wishlists_path, class: "wishlist-link" do %>
     <span class="icon_heart_alt"></span>
      <% if user_signed_in? %>
-    <div class="tip"><%= current_user.wishlist.wishlist_items.count %></div>
+    <div class="tip"><%= current_user&.wishlist&.wishlist_items&.count || 0 %></div>
     <% end %>
   <% end %>
 </li>
