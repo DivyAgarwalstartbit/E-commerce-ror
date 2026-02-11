@@ -40,6 +40,7 @@ products = []
 
 products << Product.create!(
   name: "Floral Summer Dress",
+  slug: "floeral-summer-dress",
   brand: "Zara",
   short_description: "Light and breezy summer dress.",
   description: "Beautiful floral dress perfect for summer.",
@@ -50,6 +51,7 @@ products << Product.create!(
 
 products << Product.create!(
   name: "Classic White Shirt",
+  slug: "classic-white-shirt",
   brand: "H&M",
   short_description: "Slim fit formal shirt.",
   description: "Perfect for office and formal occasions.",
@@ -60,6 +62,7 @@ products << Product.create!(
 
 products << Product.create!(
   name: "Kids Cartoon T-shirt",
+  slug: "kids-cartoon-tshirt",
   brand: "MiniStyle",
   short_description: "Cute cartoon printed tee.",
   description: "Soft fabric with fun cartoon prints.",
