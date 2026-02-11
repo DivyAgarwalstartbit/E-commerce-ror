@@ -1,6 +1,6 @@
 class ProductVariantCombination < ApplicationRecord
     belongs_to :product
-    has_many :line_items
+    has_many :line_items , dependent: :destroy
     has_many :product_variant_combinationitems
     has_many :product_variants, through: :product_variant_combinationitems
     has_many :carts, through: :line_items 
