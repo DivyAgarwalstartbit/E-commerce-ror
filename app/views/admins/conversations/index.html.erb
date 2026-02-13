@@ -1,66 +1,123 @@
 <!-- app/views/admins/conversations/index.html.erb -->
-<h1>All Conversations</h1>
+<div class="admin-content">
+  <div class="page-header">
+    <h2>Conversations</h2>
+    <p>All customer conversations</p>
+  </div>
 
-<table class="admin-conversations-table">
-  <thead>
-    <tr>
-      <th>Conversation ID</th>
-      <th>User</th>
-      <th>Last Message</th>
-      <%# <th>Status</th> %>
-      <th>Created At</th>
-      <th>Action</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% @conversations.each do |conversation| %>
-      <tr>
-        <td><%= conversation.id %></td>
-        <td><%= conversation.user.email %></td>
-        <td>
+  <div class="table-card">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>User</th>
+          <th>Last Message</th>
+          <th>Created</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <% @conversations.each do |conversation| %>
           <% last_msg = conversation.messages.order(created_at: :desc).first %>
-          <%= last_msg ? truncate(last_msg.body, length: 50) : "No messages yet" %>
-        </td>
-         <%# <td><%= conversation.status.capitalize %></td>
-        <td><%= conversation.created_at.strftime("%b %d, %Y %H:%M") %></td>
-        <td>
-          <%= link_to "Open", admins_conversation_path(conversation), class: "btn btn-primary" %>
-        </td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
+
+          <tr>
+            <td>#<%= conversation.id %></td>
+
+            <td>
+              <div class="user-email">
+                <%= conversation.user.email %>
+              </div>
+            </td>
+
+            <td class="last-message">
+              <%= last_msg ? truncate(last_msg.body, length: 60) : "No messages yet" %>
+            </td>
+
+            <td>
+              <%= conversation.created_at.strftime("%d %b %Y") %>
+            </td>
+
+            <td>
+              <%= link_to "View",
+                    admins_conversation_path(conversation),
+                    class: "btn-view" %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
 
 <style>
-.admin-conversations-table {
+.admin-content {
+  padding: 30px;
+}
+
+.page-header h2 {
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.page-header p {
+  color: #777;
+  margin-bottom: 25px;
+}
+
+.table-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+}
+
+.admin-table {
   width: 100%;
   border-collapse: collapse;
 }
 
-.admin-conversations-table th,
-.admin-conversations-table td {
-  border: 1px solid #ddd;
-  padding: 8px;
-}
-
-.admin-conversations-table th {
-  background-color: #f2f2f2;
+.admin-table th {
   text-align: left;
+  font-weight: 600;
+  padding: 12px;
+  background: #f8f9fa;
+  color: #444;
 }
 
-.admin-conversations-table tr:hover {
-  background-color: #f9f9f9;
+.admin-table td {
+  padding: 14px 12px;
+  border-bottom: 1px solid #eee;
+  color: #555;
 }
 
-.btn {
-  padding: 5px 10px;
+.admin-table tr:hover {
+  background-color: #f9fafc;
+}
+
+.user-email {
+  font-weight: 500;
+}
+
+.last-message {
+  color: #777;
+  max-width: 300px;
+}
+
+.btn-view {
+  display: inline-block;
+  padding: 6px 14px;
+  background-color: #2563eb;
+  color: #fff;
+  border-radius: 6px;
+  font-size: 14px;
   text-decoration: none;
-  color: white;
-  background-color: #007bff;
-  border-radius: 3px;
+  transition: 0.2s ease;
 }
 
-.btn:hover {
-  background-color: #0056b3;
+.btn-view:hover {
+  background-color: #1e4ed8;
 }
+
 </style>

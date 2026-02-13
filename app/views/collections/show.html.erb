@@ -163,8 +163,21 @@
                   </a>
                 </li>
               <% end %>
-              <li><a href="#"><span class="icon_heart_alt"></span></a></li>
-              <li><a href="#"><span class="icon_bag_alt"></span></a></li>
+                
+ <li>
+    <a  class="wishlist-btn" data-product-id="<%= product.id %>">
+      <span class="icon_heart_alt"></span>
+    </a>
+  </li>
+
+  <!-- Add to cart -->
+  <li>
+    <a  class="add-to-cart-btn" data-variant-id="<%= product.default_variant_combination.id %>">
+      <span class="icon_bag_alt"></span>
+    </a>
+  </li>
+               
+             
             </ul>
           </div>
 
@@ -212,4 +225,60 @@
     el.addEventListener('change', () => el.form.submit())
   })
     </script>
+
+    <script>
+document.addEventListener("turbolinks:load", () => {
+
+  // Add to Cart
+  document.querySelectorAll(".add-to-cart-btn").forEach(btn => {
+    btn.addEventListener("click", e => {
+      e.preventDefault();
+      const variantId = btn.dataset.variantId;
+      
+      fetch("/line_items", {
+        method: "POST",
+        headers: {
+          "X-CSRF-Token": document.querySelector("meta[name=csrf-token]").content,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ quantity: 1, product_variant_combination_id: variantId })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          alert("Added to cart 🛒");
+          document.getElementById("cart-count").innerText = data.cart_count;
+        }
+      });
+    });
+  });
+
+
+  // Add to Wishlist
+  document.querySelectorAll(".wishlist-btn").forEach(btn => {
+    btn.addEventListener("click", e => {
+      e.preventDefault();
+      const productId = btn.dataset.productId;
+
+      fetch("/wishlist_items", {
+        method: "POST",
+        headers: {
+          "X-CSRF-Token": document.querySelector("meta[name=csrf-token]").content,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ product_id: productId })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          alert("Added to wishlist ❤️");
+        }
+      });
+    });
+  });
+
+});
+
+</script>
+
    

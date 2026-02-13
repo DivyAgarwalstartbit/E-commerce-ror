@@ -20,9 +20,7 @@
   </head>
 
   <body>
-    <div id="preloder">
-        <div class="loader"></div>
-    </div>
+   
 
     <!-- Offcanvas Menu Begin -->
     <div class="offcanvas-menu-overlay"></div>
@@ -69,8 +67,8 @@
                             <li class="<%= 'active' if current_page?(admins_orders_path) %>"><%= link_to "Orders", admins_orders_path %></li>
                             <li class="<%= 'active' if current_page?(admins_products_path) %>"><%= link_to "Products", admins_products_path %>
                                 <ul class="dropdown">
-                                    <li><a href="./shop-cart.html">Collections</a></li>
-                                    <li><a href="./checkout.html">Categories</a></li>
+                                    <li><%= link_to "Collections", admins_collections_path %></li>
+                                    <li><%= link_to "Categories", admins_categories_path %></li>
                                 </ul>
                             </li> 
                             <li class="<%= 'active' if current_page?(admins_customers_path) %>"><%= link_to "Customers", admins_customers_path %></li>
@@ -101,7 +99,9 @@
             </div>
         </div>
     </header>
-
+ <div id="preloder">
+        <div class="loader"></div>
+    </div>
     <%= yield %>
 
     <script>
