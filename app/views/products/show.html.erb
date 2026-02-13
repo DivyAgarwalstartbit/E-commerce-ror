@@ -22,12 +22,37 @@
       <div class="col-lg-6">
         <div class="product__details__pic">
           <div class="product__details__pic__left product__thumb nice-scroll">
+          <div class="product__details__pic__item">
+  <% if @product.featured_image.attached? %>
+    <%= image_tag @product.featured_image,
+          alt: @product.name,
+          id: "main-product-image",
+          class: "img-fluid" %>
+  <% else %>
+    <%= image_tag "default-product.jpg",
+          alt: @product.name,
+          id: "main-product-image",
+          class: "img-fluid" %>
+  <% end %>
+</div>
             
           </div>
 
           <div class="product__details__slider__content">
             <div class="product__details__pic__slider owl-carousel">
-              
+              <div class="product__details__pic__item">
+  <% if @product.featured_image.attached? %>
+    <%= image_tag @product.featured_image,
+          alt: @product.name,
+          id: "main-product-image",
+          class: "img-fluid" %>
+  <% else %>
+    <%= image_tag "default-product.jpg",
+          alt: @product.name,
+          id: "main-product-image",
+          class: "img-fluid" %>
+  <% end %>
+</div>
             </div>
           </div>
         </div>

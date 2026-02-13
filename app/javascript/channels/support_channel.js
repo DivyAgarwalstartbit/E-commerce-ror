@@ -18,13 +18,16 @@ document.addEventListener("turbolinks:load", () => {
                 console.log("Connected to SupportChatChannel for conversation", conversationId)
             },
             received(data) {
-                console.log("Received data:", data)
-                const div = document.createElement("div")
-                div.className = `message ${data.sender.toLowerCase()}`
-                div.innerHTML = `<strong>${data.sender}:</strong> ${data.body}`
-                messagesDiv.appendChild(div)
-                messagesDiv.scrollTop = messagesDiv.scrollHeight
+                const messagesContainer = document.getElementById("messages");
+
+                if (messagesContainer && data.html) {
+                    messagesContainer.insertAdjacentHTML("beforeend", data.html);
+
+                    // auto scroll
+                    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                }
             }
+
         }
     )
 
