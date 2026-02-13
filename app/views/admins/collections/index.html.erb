@@ -1,5 +1,8 @@
 <div class="admin-container">
-  <h2>All Collections</h2>
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>All Collections</h2>
+    <%= link_to "New Collection", new_admins_collection_path, class: "btn-new-collection" %>
+  </div>
 
   <table class="admin-table">
     <thead>
@@ -24,7 +27,7 @@
           <td><%= collection.categories.count %></td>
 
           <td>
-            <%= link_to "View", admins_collections_path(collection), class: "btn-view" %>
+            <%= link_to "Edit", edit_admins_collection_path(collection), class: "btn-view" %>
           </td>
         </tr>
       <% end %>
@@ -32,15 +35,30 @@
   </table>
 </div>
 
-
 <style>
 .admin-container {
   padding: 30px;
   background: #f8f9fb;
 }
 
+.d-flex {
+  display: flex;
+}
+
+.justify-content-between {
+  justify-content: space-between;
+}
+
+.align-items-center {
+  align-items: center;
+}
+
+.mb-3 {
+  margin-bottom: 1rem;
+}
+
 .admin-container h2 {
-  margin-bottom: 15px;
+  margin: 0;
   font-weight: 600;
 }
 
@@ -82,4 +100,19 @@
   background: #0f5bd4;
 }
 
+.btn-new-collection {
+  background: #28a745;
+  color: white;
+  padding: 8px 18px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 14px;
+  box-shadow: 0 2px 6px rgba(40,167,69,0.4);
+  transition: background-color 0.3s ease;
+}
+
+.btn-new-collection:hover {
+  background: #218838;
+}
 </style>

@@ -1,0 +1,60 @@
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      
+      <div class="card shadow-sm border-0 rounded-4">
+        <div class="card-body p-5">
+
+          <h2 class="text-center mb-4">
+            <%= @collection.new_record? ? "New Collection" : "Edit Collection" %>
+          </h2>
+
+          <%= form_with(model: [:admins, @collection], local: true) do |form| %>
+
+            <% if @collection.errors.any? %>
+              <div class="alert alert-danger rounded-3">
+                <strong><%= pluralize(@collection.errors.count, "error") %> prohibited this collection from being saved:</strong>
+                <ul class="mb-0 mt-2">
+                  <% @collection.errors.full_messages.each do |message| %>
+                    <li><%= message %></li>
+                  <% end %>
+                </ul>
+              </div>
+            <% end %>
+
+            <!-- Collection Name -->
+            <div class="mb-4">
+              <%= form.label :name, "Collection Name", class: "form-label fw-semibold" %>
+              <%= form.text_field :name,
+                    class: "form-control form-control-lg rounded-3",
+                    placeholder: "Enter collection name",
+                    required: true %>
+            </div>
+
+            <!-- Description -->
+            <div class="mb-4">
+              <%= form.label :description, class: "form-label fw-semibold" %>
+              <%= form.text_area :description,
+                    rows: 4,
+                    class: "form-control rounded-3",
+                    placeholder: "Enter collection description" %>
+            </div>
+
+            <!-- Buttons -->
+            <div class="d-flex justify-content-between mt-4">
+              <%= link_to "Cancel",
+                          admins_collections_path,
+                          class: "btn btn-outline-secondary px-4 rounded-3" %>
+
+              <%= form.submit @collection.new_record? ? "Create Collection" : "Update Collection",
+                              class: "btn btn-dark px-4 rounded-3" %>
+            </div>
+
+          <% end %>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
