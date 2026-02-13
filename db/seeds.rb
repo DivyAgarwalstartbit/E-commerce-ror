@@ -1,15 +1,37 @@
 puts "Cleaning database..."
-WishlistItem.destroy_all     # references Product
-LineItem.destroy_all         # references ProductVariantCombination
+
+# =========================
+# DELETE IN SAFE ORDER
+# =========================
+
+Message.destroy_all
+Conversation.destroy_all
+Payment.destroy_all
+LineItem.destroy_all
+Order.destroy_all
+Cart.destroy_all
+BillingDetail.destroy_all
+WishlistItem.destroy_all
+Wishlist.destroy_all
+
 ProductVariantCombinationitem.destroy_all
-ProductVariantCombination.destroy_all  # references Product
-ProductVariant.destroy_all   # references Product
-Product.destroy_all          # references Category
-Category.destroy_all         # references Collection
-Collection.destroy_all         # optional: clear users if you want a clean slate
-Admin.destroy_all            # clear admins to recreate default admin
+ProductVariantCombination.destroy_all
+ProductVariant.destroy_all
+Product.destroy_all
+Category.destroy_all
+Collection.destroy_all
+
+User.destroy_all
+Admin.destroy_all
+
+puts "Database cleaned ✅"
+
+# =========================
+# CREATE COLLECTIONS
+# =========================
 
 puts "Creating collections..."
+
 womens = Collection.create!(
   name: "Womens",
   description: "Explore the latest trends in women's fashion."
@@ -30,14 +52,24 @@ all_products = Collection.create!(
   description: "Browse our complete collection of products."
 )
 
+# =========================
+# CREATE CATEGORIES
+# =========================
+
 puts "Creating categories..."
+
 womens_dresses = Category.create!(name: "Dresses", collection: womens)
 womens_tshirts = Category.create!(name: "T-shirt", collection: womens)
 mens_shirts = Category.create!(name: "Shirt", collection: mens)
 mens_tshirts = Category.create!(name: "T-shirt", collection: mens)
 kids_wear = Category.create!(name: "Kids Wear", collection: kids)
 
+# =========================
+# CREATE PRODUCTS
+# =========================
+
 puts "Creating products..."
+
 products = []
 
 products << Product.create!(
@@ -73,15 +105,23 @@ products << Product.create!(
   category: kids_wear
 )
 
+# =========================
+# CONNECT PRODUCTS TO COLLECTIONS
+# =========================
+
 puts "Connecting products to collections..."
+
 products.each do |product|
-  # Add to category's collection
-  product.collections << product.category.collection unless product.collections.include?(product.category.collection)
-  # Add to "All products" collection
-  product.collections << all_products unless product.collections.include?(all_products)
+  product.collections << product.category.collection
+  product.collections << all_products
 end
 
+# =========================
+# CREATE VARIANTS + COMBINATIONS
+# =========================
+
 puts "Creating variants and combinations..."
+
 products.each do |product|
   case product.category.name
   when "Shirt", "T-shirt"
@@ -129,11 +169,32 @@ products.each do |product|
   end
 end
 
+# =========================
+# CREATE DEFAULT USER
+# =========================
+
+puts "Creating default user..."
+
+user = User.create!(
+  email: "divyagarwal@example.com",
+  password: "123456",
+  password_confirmation: "123456"
+)
+
+# Create cart & wishlist for user
+Cart.create!(user: user)
+Wishlist.create!(user: user)
+
+# =========================
+# CREATE DEFAULT ADMIN
+# =========================
+
 puts "Creating default admin..."
+
 Admin.create!(
   email: "admin@example.com",
   password: "123456",
   password_confirmation: "123456"
 )
 
-puts "Dummy data and admin created successfully!"
+puts "✅ Dummy data, user & admin created successfully!"
