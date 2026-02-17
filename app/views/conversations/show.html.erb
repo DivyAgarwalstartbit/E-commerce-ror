@@ -4,7 +4,7 @@
     
   </div>
 
-  <div id="messages"
+  <div id="messages_<%= @conversation.id %>"
        class="chat-messages"
        data-conversation-id="<%= @conversation.id %>">
     <%= render @messages %>
@@ -12,7 +12,7 @@
 
   <%= form_with model: [@conversation, Message.new],
                 local: false,
-                html: { id: "message_form", class: "chat-form" } do |f| %>
+                html: { id: "message_form_#{@conversation.id}_user", class: "chat-form" } do |f| %>
     <%= f.text_field :body,
           placeholder: "Type your message…",
           class: "chat-input" %>

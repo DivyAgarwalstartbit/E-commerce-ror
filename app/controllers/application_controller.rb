@@ -6,7 +6,7 @@ class ApplicationController < ActionController::Base
   private
 
   def current_account
-    current_admin || current_user
+     current_user
   end
  def ensure_user_conversation
     current_user.conversations.find_or_create_by(status: "open")

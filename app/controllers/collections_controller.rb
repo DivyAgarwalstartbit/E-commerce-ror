@@ -1,22 +1,18 @@
 class CollectionsController < ApplicationController
-  before_action :set_collection, only: [:show]
+  before_action :set_collection
 
   def show
-    @collections = Collection.includes(:categories)
-
     base_scope =
       if @collection.id == 7
-        Product.all
+        Product.includes(:category, :product_variant_combinations, :product_variants)
       else
-        @collection.products
+        @collection.products.includes(:category, :product_variant_combinations, :product_variants)
       end
 
-    @q = base_scope
-          .left_joins(:product_variant_combinations)
-          .includes(:category, :product_variant_combinations)
-          .ransack(params[:q])
-
+    # Use Ransack with associations
+    @q = base_scope.ransack(params[:q])
     @products = @q.result(distinct: true)
+    @collections = Collection.includes(:categories)
   end
 
   private

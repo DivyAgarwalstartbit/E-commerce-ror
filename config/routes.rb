@@ -8,12 +8,6 @@ Rails.application.routes.draw do
   # Remove the path_names section entirely, or use it correctly like:
   # path_names: { sign_in: 'login', sign_out: 'logout', sign_up: 'register' }
 
-  devise_for :admins, skip: [:registrations], path: 'admins', path_names: {
-    sign_in: 'sign_in',
-    sign_out: 'sign_out'
-  }, controllers: {
-    sessions: 'admins/sessions'
-  }
 
   namespace :admins do
     root to: 'dashboards#index' 

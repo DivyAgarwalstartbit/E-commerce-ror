@@ -2,7 +2,7 @@
 class MessagesController < ApplicationController
   def create
   conversation = Conversation.find(params[:conversation_id])
-  sender = determine_sender
+  sender = current_user
   message = conversation.messages.create!(message_params.merge(sender: sender))
 
   html = ApplicationController.render(
@@ -13,7 +13,9 @@ class MessagesController < ApplicationController
   SupportChatChannel.broadcast_to(conversation, { html: html })
 
   head :ok
+  
 end
+
 
   private
 
@@ -22,10 +24,7 @@ end
   end
 
   def determine_sender
-    if request.referer&.include?('/admins/')
-      current_admin
-    else
       current_user
     end
-  end
+  
 end

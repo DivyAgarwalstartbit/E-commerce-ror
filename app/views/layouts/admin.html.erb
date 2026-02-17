@@ -79,14 +79,14 @@
                 <div class="col-lg-3">
                     <div class="header__right">
                         <div class="header__right__auth">
-                         <% if admin_signed_in? %>
+                         <% if user_signed_in? && current_user.has_role?(:admin) %>
   <%= link_to "Logout",
-      destroy_admin_session_path,
+      destroy_user_session_path,
       method: :delete,
       class: "logout-link" %>
 <% else %>
   <%= link_to "Login",
-      new_admin_session_path,
+      new_user_session_path,
       class: "login-link" %>
 <% end %>
 

@@ -1,7 +1,6 @@
-<!-- app/views/messages/_message.html.erb -->
-<div class="message <%= message.sender_type == "Admin" ? "admin" : "user" %>">
+<div class="message <%= message.sender.has_role?(:admin) ? "admin" : "user" %>">
   <div class="message-bubble">
-    <% if message.sender_type == "Admin" %>
+    <% if message.sender.has_role?(:admin) %>
       <span class="sender-label">Store</span>
     <% end %>
 
@@ -12,4 +11,3 @@
     <%= message.created_at.strftime("%H:%M") %>
   </div>
 </div>
-

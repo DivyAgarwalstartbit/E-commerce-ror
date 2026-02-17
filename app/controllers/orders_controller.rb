@@ -28,6 +28,7 @@ class OrdersController < ApplicationController
         }
       end,
       mode: 'payment',
+      customer_email: current_user.email,   # <- This sets the contact email in the UI
       success_url: success_orders_url(order_id: @order.id),
       cancel_url: cancel_orders_url(order_id: @order.id)
     )

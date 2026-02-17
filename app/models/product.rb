@@ -31,7 +31,12 @@ class Product < ApplicationRecord
     end
 
    def self.ransackable_associations(auth_object = nil)
-  ["product_variant_combinations", "category", "collections"]
-end
+    %w[product_variant_combinations product_variants category collections]
+  end
+
+  # Attributes users can search directly
+  def self.ransackable_attributes(auth_object = nil)
+    %w[name brand slug promotion short_description description specification featured]
+  end
 
 end

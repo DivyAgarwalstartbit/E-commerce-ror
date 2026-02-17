@@ -51,16 +51,15 @@
                         <div class="card-body">
                           <ul>
                             <% collection.categories.each do |category| %>
-                             <li class="<%= 'selected' if params.dig(:q, :category_id_eq).to_i == category.id %>">
+                            <li class="<%= 'selected' if params.dig(:q, :category_id_eq).to_i == category.id %>">
   <%= link_to category.name,
       collection_path(
         @collection,
-        q: params.fetch(:q, ActionController::Parameters.new)
-                 .permit!
-                 .to_h
-                 .merge(category_id_eq: category.id)
+        q: (params[:q]&.to_unsafe_h || {}).merge(category_id_eq: category.id)
       ) %>
 </li>
+
+
 
                             <% end %>
                           </ul>
@@ -106,8 +105,9 @@
               <div class="size__list">
                 <% ["XXS","XS","S","M","L","XL"].each do |size| %>
   <label>
-    <%= check_box_tag "q[product_variant_combinations_size_in][]", size, Array(params.dig(:q, :product_variant_combinations_size_in)).include?(size), class: "size-filter" %>
+    <%= check_box_tag "q[product_variants_value_in][]", size, Array(params.dig(:q, :product_variants_value_in)).include?(size), class: "size-filter" %>
     <span class="checkmark"></span>
+    <%= hidden_field_tag "q[product_variants_variant_type_eq]", "size" %>
     <%= size %>
   </label>
 <% end %>
@@ -123,8 +123,10 @@
               <div class="size__list color__list">
                <% ["Black","White","Red","Grey","Blue","Beige","Green","Yellow"].each do |color| %>
   <label>
-    <%= check_box_tag "q[product_variant_combinations_color_in][]", color, Array(params.dig(:q, :product_variant_combinations_color_in)).include?(color), class: "color-filter" %>
+    <%= check_box_tag "q[product_variants_value_in][]", color, Array(params.dig(:q, :product_variants_value_in)).include?(color), class: "color-filter" %>
     <span class="checkmark"></span>
+    <%= hidden_field_tag "q[product_variants_variant_type_eq]", "color" %>
+
     <%= color %>
   </label>
 <% end %>

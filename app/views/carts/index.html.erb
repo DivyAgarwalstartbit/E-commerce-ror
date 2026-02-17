@@ -33,7 +33,7 @@
            <tbody>
   <% if @line_items.any? %>
     <% @line_items.each do |item| %>
-      <tr>
+      <tr data-line-item-id="<%= item.id %>">
         <td class="cart__product__item">
           <div class="cart__product__item__image">
             <% if item.product_variant_combination.product.featured_image.attached? %>
@@ -54,13 +54,11 @@
         </td>
 
         <td class="cart__quantity">
-          <%= form_with model: item, url: line_item_path(item), method: :patch, local: true do |f| %>
-            <%= f.number_field :quantity, min: 1, value: item.quantity %>
-            <%= f.submit "Update", class: "btn btn-sm btn-primary" %>
-          <% end %>
+          <input type="number" class="quantity-input" min="1" value="<%= item.quantity %>" data-line-item-id="<%= item.id %>">
+
         </td>
 
-        <td class="cart__total">
+        <td class="cart__total" data-cart-target="lineTotal">
           <%= number_to_currency(item.quantity * item.product_variant_combination.price) %>
         </td>
 
@@ -124,7 +122,7 @@
 
 
 <script>
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("turbolinks:load", () => {
   // Handle quantity changes
   document.querySelectorAll(".quantity-input").forEach(input => {
     input.addEventListener("change", updateQuantity)
@@ -140,7 +138,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const tr = input.closest("tr");
     const lineItemId = tr.dataset.lineItemId;
     const quantity = parseInt(input.value);
-
+    
     fetch(`/line_items/${lineItemId}`, {
       method: "PATCH",
       headers: {
@@ -154,6 +152,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (data.success) {
         // Update row total
         tr.querySelector("[data-cart-target='lineTotal']").innerText = data.line_item_total;
+        console.log(quantity);
         // Update cart totals
         document.getElementById("cart-subtotal").innerText = data.cart_subtotal;
         document.getElementById("cart-total").innerText = data.cart_total;

@@ -5,12 +5,12 @@ class ProductVariant < ApplicationRecord
 
     validates :variant_type, presence:true
     validates :value , presence:true
-     def self.ransackable_attributes(auth_object = nil)
-    ["variant_type", "value"]
+      def self.ransackable_attributes(auth_object = nil)
+    %w[variant_type value]
   end
 
   def self.ransackable_associations(auth_object = nil)
-    ["product", "product_variant_combinations"]
+    %w[product product_variant_combinations]
   end
 
 end

@@ -14,11 +14,14 @@ class ProductVariantCombination < ApplicationRecord
 
     before_validation :generate_sku, on: :create
 
-    def self.ransackable_attributes(auth_object = nil)
-  ["price", "compared_price", "sku", "stock_qunatity"]
-end
+      # Allow these fields to be searchable by Ransack
+   def self.ransackable_attributes(auth_object = nil)
+    %w[price compared_price sku stock_qunatity]
+  end
 
-
+  def self.ransackable_associations(auth_object = nil)
+    %w[product product_variants]
+  end
     private
 
     def generate_sku

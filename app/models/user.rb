@@ -1,19 +1,28 @@
 class User < ApplicationRecord
+  rolify
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable,
          :omniauthable, omniauth_providers: [:google_oauth2]
-
+  
   has_many :orders , dependent: :destroy
   has_one :cart, dependent: :destroy
   has_one :wishlist, dependent: :destroy
   has_many :conversations, dependent: :destroy
   has_many :payments, dependent: :destroy
   has_many :billing_details , dependent: :destroy , foreign_key: :users_id
+  after_create :assign_default_role
 
   after_create :create_initial_conversation
   private
+
+  private
+
+def assign_default_role
+  self.add_role(:user) if self.roles.blank?
+end
+
 
   def create_initial_conversation
     conversations.create(status: "open")
@@ -23,6 +32,7 @@ class User < ApplicationRecord
   where(provider: auth.provider, uid: auth.uid).first_or_create do |user|
     user.email = auth.info.email
     user.password = Devise.friendly_token[0, 20]
+    
   end
 end
 

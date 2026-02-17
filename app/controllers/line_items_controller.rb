@@ -1,14 +1,27 @@
 # app/controllers/line_items_controller.rb
 class LineItemsController < ApplicationController
-    def update
-    line_item = current_cart.line_items.find(params[:id])
+   def update
+  line_item = current_cart.line_items.find(params[:id])
 
-    if line_item.update(quantity: params[:line_item][:quantity])
-      redirect_to carts_path, notice: "Cart updated successfully"
-    else
-      redirect_to carts_path, alert: "Failed to update item"
+  if line_item.update(quantity: params[:line_item][:quantity])
+    respond_to do |format|
+      format.json do
+        render json: {
+          success: true,
+          line_item_total: view_context.number_to_currency(line_item.quantity * line_item.product_variant_combination.price),
+          cart_subtotal: view_context.number_to_currency(current_cart.total_amount),
+          cart_total: view_context.number_to_currency(current_cart.total_amount)
+        }
+      end
+      format.html { redirect_to carts_path, notice: "Cart updated successfully" }
+    end
+  else
+    respond_to do |format|
+      format.json { render json: { success: false, errors: line_item.errors.full_messages }, status: :unprocessable_entity }
+      format.html { redirect_to carts_path, alert: "Failed to update item" }
     end
   end
+end
 
   def destroy
     line_item = current_cart.line_items.find(params[:id])
