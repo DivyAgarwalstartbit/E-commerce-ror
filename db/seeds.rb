@@ -22,7 +22,6 @@ Category.destroy_all
 Collection.destroy_all
 
 User.destroy_all
-Admin.destroy_all
 
 puts "Database cleaned ✅"
 
@@ -191,10 +190,11 @@ Wishlist.create!(user: user)
 
 puts "Creating default admin..."
 
-Admin.create!(
+admin = User.create!(
   email: "admin@example.com",
   password: "123456",
   password_confirmation: "123456"
 )
+
 
 puts "✅ Dummy data, user & admin created successfully!"
