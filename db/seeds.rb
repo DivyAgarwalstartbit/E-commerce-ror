@@ -196,5 +196,6 @@ admin = User.create!(
   password_confirmation: "123456"
 )
 
+admin.add_role(:admin)
 
 puts "✅ Dummy data, user & admin created successfully!"
