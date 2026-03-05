@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2026_02_17_070314) do
+ActiveRecord::Schema.define(version: 2026_02_26_054944) do
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
@@ -57,6 +57,11 @@ ActiveRecord::Schema.define(version: 2026_02_17_070314) do
     t.index ["users_id"], name: "index_billing_details_on_users_id"
   end
 
+  create_table "blogs", force: :cascade do |t|
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
   create_table "carts", force: :cascade do |t|
     t.integer "user_id"
     t.datetime "created_at", precision: 6, null: false
@@ -84,6 +89,11 @@ ActiveRecord::Schema.define(version: 2026_02_17_070314) do
     t.integer "product_id", null: false
     t.index ["collection_id"], name: "index_collections_products_join_table_on_collection_id"
     t.index ["product_id"], name: "index_collections_products_join_table_on_product_id"
+  end
+
+  create_table "contacts", force: :cascade do |t|
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "conversations", force: :cascade do |t|

@@ -1,0 +1,182 @@
+<h2>Create New Order</h2>
+
+<%= form_with model: [:admins, @order], local: true do |f| %>
+
+  <% if @order.errors.any? %>
+    <div class="alert alert-danger">
+      <% @order.errors.full_messages.each do |msg| %>
+        <p><%= msg %></p>
+      <% end %>
+    </div>
+  <% end %>
+
+  <!-- Customer -->
+  <div class="mb-3">
+    <%= f.label :user_id, "Select Customer" %>
+    <%= f.collection_select :user_id, @users, :id, :email,
+          { prompt: "Choose Customer" },
+          { id: "user_select", class: "form-control" } %>
+  </div>
+
+  <!-- Billing -->
+  <div class="mb-3">
+    <%= f.label :billing_detail_id, "Billing Address" %>
+    <%= f.select :billing_detail_id, [],
+          { prompt: "Select Billing Address" },
+          { id: "billing_select", class: "form-control" } %>
+  </div>
+
+  <!-- Line Items -->
+  <div class="mb-3">
+    <h5>Products</h5>
+
+    <table class="table" id="line-items-table">
+      <thead>
+        <tr>
+          <th>Product</th>
+          <th>Quantity</th>
+          <th>Unit Price</th>
+          <th>Subtotal</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="line-items-body">
+        <!-- rows added by JS -->
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="3" class="text-right"><strong>Total:</strong></td>
+          <td><strong id="order-total">$0.00</strong></td>
+          <td></td>
+        </tr>
+      </tfoot>
+    </table>
+
+    <button type="button" class="btn btn-secondary" id="add-line-item">
+      + Add Product
+    </button>
+  </div>
+
+  <div>
+    <%= f.submit "Create Order", class: "btn btn-primary" %>
+  </div>
+
+<% end %>
+
+<!-- Product data for JS -->
+<script>
+  const PRODUCTS = <%= @product_variants.map { |pv|
+    {
+      id:    pv.id,
+      label: "#{pv.product.name} — #{pv.sku}",
+      price: pv.price.to_f
+    }
+  }.to_json.html_safe %>;
+
+  let rowIndex = 0;
+
+  function addRow() {
+    const tbody = document.getElementById("line-items-body");
+    const idx   = rowIndex++;
+
+    // Build product options
+    const options = PRODUCTS.map(p =>
+      `<option value="${p.id}" data-price="${p.price}">${p.label}</option>`
+    ).join('');
+
+    const row = document.createElement("tr");
+    row.dataset.index = idx;
+    row.innerHTML = `
+      <td>
+        <select name="order[line_items][${idx}][product_variant_combination_id]"
+                class="form-control product-select">
+          <option value="">Select product</option>
+          ${options}
+        </select>
+      </td>
+      <td>
+        <input type="number"
+               name="order[line_items][${idx}][quantity]"
+               class="form-control quantity-input"
+               value="1" min="1" style="width:80px" />
+      </td>
+      <td class="unit-price">—</td>
+      <td class="subtotal">—</td>
+      <td>
+        <button type="button" class="btn btn-danger btn-sm remove-row">✕</button>
+      </td>
+    `;
+
+    tbody.appendChild(row);
+    attachRowListeners(row);
+  }
+
+  function attachRowListeners(row) {
+    const productSelect = row.querySelector(".product-select");
+    const quantityInput = row.querySelector(".quantity-input");
+
+    productSelect.addEventListener("change", () => updateRow(row));
+    quantityInput.addEventListener("input",  () => updateRow(row));
+
+    row.querySelector(".remove-row").addEventListener("click", () => {
+      row.remove();
+      updateTotal();
+    });
+  }
+
+  function updateRow(row) {
+    const select   = row.querySelector(".product-select");
+    const qty      = parseInt(row.querySelector(".quantity-input").value) || 0;
+    const selected = select.options[select.selectedIndex];
+    const price    = selected ? parseFloat(selected.dataset.price) || 0 : 0;
+    const subtotal = price * qty;
+
+    row.querySelector(".unit-price").textContent = price   ? `$${price.toFixed(2)}`   : "—";
+    row.querySelector(".subtotal").textContent   = subtotal ? `$${subtotal.toFixed(2)}` : "—";
+
+    updateTotal();
+  }
+
+  function updateTotal() {
+    let total = 0;
+    document.querySelectorAll("#line-items-body tr").forEach(row => {
+      const select   = row.querySelector(".product-select");
+      const qty      = parseInt(row.querySelector(".quantity-input")?.value) || 0;
+      const selected = select?.options[select.selectedIndex];
+      const price    = selected ? parseFloat(selected.dataset.price) || 0 : 0;
+      total += price * qty;
+    });
+    document.getElementById("order-total").textContent = `$${total.toFixed(2)}`;
+  }
+
+  // Add first row automatically
+  document.addEventListener("turbolinks:load", () => {
+    addRow();
+
+    document.getElementById("add-line-item").addEventListener("click", addRow);
+
+    // Billing details AJAX
+    document.getElementById("user_select").addEventListener("change", function () {
+      const userId       = this.value;
+      const billingSelect = document.getElementById("billing_select");
+      billingSelect.innerHTML = '<option value="">Loading...</option>';
+
+      if (!userId) {
+        billingSelect.innerHTML = '<option value="">Select Billing Address</option>';
+        return;
+      }
+
+      fetch(`/admins/customers/${userId}/billing_details`)
+        .then(r => r.json())
+        .then(data => {
+          billingSelect.innerHTML = '<option value="">Select Billing Address</option>';
+          data.forEach(bd => {
+            const opt = document.createElement("option");
+            opt.value       = bd.id;
+            opt.textContent = `${bd.street_address}, ${bd.city}`;
+            billingSelect.appendChild(opt);
+          });
+        });
+    });
+  });
+</script>

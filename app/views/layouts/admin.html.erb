@@ -86,7 +86,7 @@
       class: "logout-link" %>
 <% else %>
   <%= link_to "Login",
-      new_user_session_path,
+      new_admin_session_path,
       class: "login-link" %>
 <% end %>
 
@@ -102,10 +102,76 @@
  <div id="preloder">
         <div class="loader"></div>
     </div>
+    <!-- Flash Messages -->
+<!-- Flash Messages -->
+<div id="flash-messages-container">
+  <% flash.each do |type, message| %>
+    <% flash_class = case type.to_sym
+        when :notice then "flash-success"
+        when :alert  then "flash-danger"
+        else "flash-info"
+       end %>
+    <div class="flash-message <%= flash_class %>">
+      <%= message %>
+    </div>
+  <% end %>
+</div>
     <%= yield %>
 
     <script>
 
+document.addEventListener("turbolinks:load", () => {
+  const flashMessages = document.querySelectorAll(".flash-message");
+
+  flashMessages.forEach(msg => {
+    // Add class to trigger slide-in
+    setTimeout(() => {
+      msg.classList.add("show");
+    }, 100); // small delay for transition effect
+
+    // Remove message after 5 seconds
+    setTimeout(() => {
+      msg.classList.remove("show");
+      // Remove from DOM after transition
+      setTimeout(() => msg.remove(), 500);
+    }, 5000);
+  });
+});
+
     </script>
  </body>
 </html>
+
+<style>
+
+#flash-messages-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 9999;
+}
+
+.flash-message {
+  background-color: #333;
+  color: #fff;
+  padding: 15px 25px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  min-width: 250px;
+  max-width: 350px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+  opacity: 0;
+  transform: translateX(100%);
+  transition: transform 0.5s ease, opacity 0.5s ease;
+  font-weight: 500;
+}
+
+.flash-success { background-color: #28a745; }
+.flash-danger  { background-color: #dc3545; }
+.flash-info    { background-color: #17a2b8; }
+
+.flash-message.show {
+  opacity: 1;
+  transform: translateX(0);
+}
+</style>

@@ -1,8 +1,8 @@
 class Product < ApplicationRecord
     belongs_to :category , required: true
-    has_many :product_variants
-    has_many :product_variant_combinations 
-    has_many :wishlist_items
+    has_many :product_variants, dependent: :destroy
+    has_many :product_variant_combinations, dependent: :destroy 
+    has_many :wishlist_items, dependent: :destroy
     has_many :wishlists, through: :wishlist_items
     has_and_belongs_to_many :collections , join_table: "collections_products_join_table"
     has_one_attached :featured_image

@@ -53,7 +53,7 @@ class OrdersController < ApplicationController
     @order = current_user.orders.find(params[:order_id])
     @order.update(status: "cancelled")
 
-    redirect_to cart_path, alert: "Payment cancelled"
+    redirect_to root_path, alert: "Payment cancelled"
   end
 
 end

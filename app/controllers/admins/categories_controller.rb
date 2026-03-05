@@ -39,7 +39,7 @@ class Admins::CategoriesController < Admins::ApplicationController
 
   def destroy
     @category.destroy
-    redirect_to admin_categories_path, notice: "Category deleted successfully"
+    redirect_to admins_categories_path, notice: "Category deleted successfully"
   end
 
   private

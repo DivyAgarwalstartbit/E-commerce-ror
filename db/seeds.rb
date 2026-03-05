@@ -1,9 +1,5 @@
 puts "Cleaning database..."
 
-# =========================
-# DELETE IN SAFE ORDER
-# =========================
-
 Message.destroy_all
 Conversation.destroy_all
 Payment.destroy_all
@@ -20,139 +16,134 @@ ProductVariant.destroy_all
 Product.destroy_all
 Category.destroy_all
 Collection.destroy_all
-
 User.destroy_all
 
 puts "Database cleaned ✅"
 
-# =========================
-# CREATE COLLECTIONS
-# =========================
+# =====================================================
+# COLLECTIONS
+# =====================================================
 
-puts "Creating collections..."
+featured      = Collection.create!(name: "Featured")
+best_sellers  = Collection.create!(name: "Best sellers")
+hot_trends    = Collection.create!(name: "Hot Trends")
+women_fashion = Collection.create!(name: "Women fashion")
+men_fashion   = Collection.create!(name: "Men fashion")
+kid_fashion  = Collection.create!(name: "Kid fashion")
+cosmetics     = Collection.create!(name: "Cosmetics")
+accessoriess   = Collection.create!(name: "Accessories")
+all_products  = Collection.create!(name: "All products")
 
-womens = Collection.create!(
-  name: "Womens",
-  description: "Explore the latest trends in women's fashion."
-)
+puts "Collections created ✅"
 
-mens = Collection.create!(
-  name: "Mens",
-  description: "Discover stylish and modern outfits for men."
-)
+# =====================================================
+# CATEGORY DEFINITIONS (PRIMARY COLLECTION + EXTRA)
+# =====================================================
 
-kids = Collection.create!(
-  name: "Kids",
-  description: "Fun, colorful and comfortable clothing for kids."
-)
+category_structure = {
+  # MEN
+  "Mens Shirt"      => { primary: men_fashion,   extra: [best_sellers] },
+  "Mens T-shirt"    => { primary: men_fashion,   extra: [best_sellers] },
+  "Mens Trousers"   => { primary: men_fashion,   extra: [hot_trends] },
+  "Mens Cream"      => { primary: men_fashion,   extra: [cosmetics, hot_trends] },
+  "Mens Wallets"    => { primary: men_fashion,   extra: [accessoriess, featured] },
 
-all_products = Collection.create!(
-  name: "All products",
-  description: "Browse our complete collection of products."
-)
+  # WOMEN
+  "Womens Shirt"    => { primary: women_fashion, extra: [best_sellers] },
+  "Womens T-shirt"  => { primary: women_fashion, extra: [best_sellers] },
+  "Womens Trousers" => { primary: women_fashion, extra: [featured, hot_trends] },
+  "Womens Cream"    => { primary: women_fashion, extra: [cosmetics, featured] },
+  "Womens Wallets"  => { primary: women_fashion, extra: [accessoriess] },
 
-# =========================
-# CREATE CATEGORIES
-# =========================
+  # KIDS
+  "Kids Shirt"      => { primary: kid_fashion,  extra: [best_sellers] },
+  "Kids T-shirt"    => { primary: kid_fashion,  extra: [featured] },
+  "Kids Trousers"   => { primary: kid_fashion,  extra: [featured] },
+  "Kids Toys"       => { primary: kid_fashion,  extra: [accessoriess, hot_trends] },
+  "Kids Cream"      => { primary: kid_fashion,  extra: [cosmetics, hot_trends] }
+}
 
 puts "Creating categories..."
 
-womens_dresses = Category.create!(name: "Dresses", collection: womens)
-womens_tshirts = Category.create!(name: "T-shirt", collection: womens)
-mens_shirts = Category.create!(name: "Shirt", collection: mens)
-mens_tshirts = Category.create!(name: "T-shirt", collection: mens)
-kids_wear = Category.create!(name: "Kids Wear", collection: kids)
+categories = {}
 
-# =========================
-# CREATE PRODUCTS
-# =========================
+category_structure.each do |name, data|
+  categories[name] = Category.create!(
+    name: name,
+    collection: data[:primary]
+  )
+end
+
+puts "Categories created ✅"
+
+# =====================================================
+# VARIANT CONFIG
+# =====================================================
+
+sizes  = %w[XXS XS S M L XL]
+colors = %w[Black White Red Grey Blue Beige Green Yellow]
+
+clothing_types = ["Shirt", "T-shirt", "Trousers"]
+
+# =====================================================
+# CREATE 2 PRODUCTS PER CATEGORY
+# =====================================================
 
 puts "Creating products..."
 
-products = []
+categories.each do |category_name, category|
 
-products << Product.create!(
-  name: "Floral Summer Dress",
-  slug: "floral-summer-dress",
-  brand: "Zara",
-  short_description: "Light and breezy summer dress.",
-  description: "Beautiful floral dress perfect for summer.",
-  specification: "Cotton fabric",
-  featured: true,
-  category: womens_dresses
-)
+  2.times do |i|
 
-products << Product.create!(
-  name: "Classic White Shirt",
-  slug: "classic-white-shirt",
-  brand: "H&M",
-  short_description: "Slim fit formal shirt.",
-  description: "Perfect for office and formal occasions.",
-  specification: "100% Cotton",
-  featured: true,
-  category: mens_shirts
-)
+    product = Product.create!(
+      name: "#{category_name} #{i + 1}",
+      slug: "#{category_name.parameterize}-#{i + 1}",
+      brand: ["Zara", "H&M", "Nike", "Levis", "Adidas"].sample,
+      short_description: "Premium quality #{category_name.downcase}",
+      description: "High quality #{category_name.downcase} designed for comfort and style.",
+      specification: "Premium fabric / material",
+      featured: [true, false].sample,
+      category: category
+    )
 
-products << Product.create!(
-  name: "Kids Cartoon T-shirt",
-  slug: "kids-cartoon-tshirt",
-  brand: "MiniStyle",
-  short_description: "Cute cartoon printed tee.",
-  description: "Soft fabric with fun cartoon prints.",
-  specification: "Polyester blend",
-  featured: false,
-  category: kids_wear
-)
+    # Attach collections
+    product.collections << category.collection
+    category_structure[category_name][:extra].each do |col|
+      product.collections << col
+    end
+    product.collections << all_products
 
-# =========================
-# CONNECT PRODUCTS TO COLLECTIONS
-# =========================
+    # =========================================
+    # CLOTHING PRODUCTS (Size + Color Matrix)
+    # =========================================
 
-puts "Connecting products to collections..."
+   if clothing_types.any? { |type| category_name.include?(type) }
 
-products.each do |product|
-  product.collections << product.category.collection
-  product.collections << all_products
-end
+  # Pick 2 sizes and 2 colors
+  selected_sizes  = sizes.sample(2)
+  selected_colors = colors.sample(2)
 
-# =========================
-# CREATE VARIANTS + COMBINATIONS
-# =========================
-
-puts "Creating variants and combinations..."
-
-products.each do |product|
-  case product.category.name
-  when "Shirt", "T-shirt"
-    sizes  = %w[S M L XL]
-    colors = %w[Red Blue Black White]
-  when "Dresses"
-    sizes  = %w[XS S M L]
-    colors = %w[Pink Yellow Blue]
-  else
-    sizes  = ["One-Size"]
-    colors = ["Default"]
-  end
-
-  size_variants = sizes.map do |size|
+  size_variants = selected_sizes.map do |size|
     product.product_variants.create!(
       variant_type: "Size",
       value: size
     )
   end
 
-  color_variants = colors.map do |color|
+  color_variants = selected_colors.map do |color|
     product.product_variants.create!(
       variant_type: "Color",
       value: color
     )
   end
 
+  # Create combinations (2 x 2 = 4)
   size_variants.product(color_variants).each do |size_var, color_var|
+
     pvc = product.product_variant_combinations.create!(
-      price: rand(20..100),
-      compared_price: rand(101..150),
-      stock_qunatity: rand(5..20),
+      price: rand(25..150),
+      compared_price: rand(151..250),
+      stock_qunatity: rand(10..50),
       sku: "#{product.slug}-#{size_var.value}-#{color_var.value}".downcase
     )
 
@@ -166,29 +157,36 @@ products.each do |product|
       product_variant_combination: pvc
     )
   end
+
+else
+  # Non clothing (single variant)
+
+  variant = product.product_variants.create!(
+    variant_type: "Default",
+    value: "Standard"
+  )
+
+  pvc = product.product_variant_combinations.create!(
+    price: rand(10..120),
+    compared_price: rand(121..200),
+    stock_qunatity: rand(10..60),
+    sku: "#{product.slug}-standard"
+  )
+
+  ProductVariantCombinationitem.create!(
+    product_variant: variant,
+    product_variant_combination: pvc
+  )
+
+end
+  end
 end
 
-# =========================
-# CREATE DEFAULT USER
-# =========================
+puts "Products & variants created ✅"
 
-puts "Creating default user..."
-
-user = User.create!(
-  email: "divyagarwal@example.com",
-  password: "123456",
-  password_confirmation: "123456"
-)
-
-# Create cart & wishlist for user
-Cart.create!(user: user)
-Wishlist.create!(user: user)
-
-# =========================
-# CREATE DEFAULT ADMIN
-# =========================
-
-puts "Creating default admin..."
+# =====================================================
+# SINGLE ADMIN
+# =====================================================
 
 admin = User.create!(
   email: "admin@example.com",
@@ -198,4 +196,5 @@ admin = User.create!(
 
 admin.add_role(:admin)
 
-puts "✅ Dummy data, user & admin created successfully!"
+puts "Admin created ✅"
+puts "🎉 FULL E-COMMERCE STORE SEEDED SUCCESSFULLY!"

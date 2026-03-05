@@ -18,7 +18,7 @@
     <tbody>
       <% @collections.each do |collection| %>
         <tr>
-          <td><input type="checkbox"></td>
+          
 
           <td><strong><%= collection.name %></strong></td>
 
@@ -28,6 +28,7 @@
 
           <td>
             <%= link_to "Edit", edit_admins_collection_path(collection), class: "btn-view" %>
+           <%= link_to "Delete", admins_collection_path(collection), method: :delete, class: "btn-view", data: { confirm: "Are you sure you want to delete this collection?" } %>
           </td>
         </tr>
       <% end %>

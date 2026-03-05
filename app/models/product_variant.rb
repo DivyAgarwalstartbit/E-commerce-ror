@@ -1,6 +1,6 @@
 class ProductVariant < ApplicationRecord
     belongs_to :product
-    has_many :product_variant_combinationitems
+    has_many :product_variant_combinationitems, dependent: :destroy
     has_many :product_variant_combinations, through: :product_variant_combinationitems
 
     validates :variant_type, presence:true

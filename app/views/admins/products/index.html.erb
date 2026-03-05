@@ -111,11 +111,12 @@
   <table class="products-table">
     <thead>
       <tr>
-        <th><input type="checkbox" /></th>
+       
         <th>Product</th>
         <th>Category</th>
         <th>Inventory</th>
-    
+         <th>Featured Products</th>
+         <th>Action</th>
       </tr>
     </thead>
 
@@ -124,8 +125,7 @@
   <tr class="clickable-row"
       data-href="<%= edit_admins_product_path(product) %>">
 
-    <td><input type="checkbox" /></td>
-
+   
     <td class="product-info">
       <% if product.featured_image.attached? %>
         <%= image_tag product.featured_image, class: "product-thumbnail" %>
@@ -138,7 +138,9 @@
     <td><%= product.category&.name %></td>
     <td><%= product.product_variant_combinations.sum(:stock_qunatity) %></td>
     <td><%= product.featured ? "Featured" : "" %></td>
-
+    <td>
+      <%= link_to "Delete", admins_product_path(product), method: :delete, class: "btn-view", data: { confirm: "Are you sure you want to delete this product?" } %>
+    </td>
   </tr>
 <% end %>
 

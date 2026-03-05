@@ -1,0 +1,118 @@
+<div class="form-wrapper">
+  <div class="form-card">
+    <h2>New Customer</h2>
+
+     <%= form_with(model: [:admins, @customer], url: admins_customers_path, local: true) do |f| %>
+      <% if @customer.errors.any? %>
+        <div class="form-errors">
+          <ul>
+            <% @customer.errors.full_messages.each do |msg| %>
+              <li><%= msg %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <div class="form-group">
+        <%= f.label :email, "Email" %>
+        <%= f.email_field :email, placeholder: "Enter customer email" %>
+      </div>
+
+      <div class="form-group">
+        <%= f.label :password, "Password" %>
+        <%= f.password_field :password, placeholder: "Enter password" %>
+      </div>
+
+      <div class="form-group">
+        <%= f.label :password_confirmation, "Confirm Password" %>
+        <%= f.password_field :password_confirmation, placeholder: "Confirm password" %>
+      </div>
+
+      <div class="form-actions">
+        <%= link_to "Cancel", admins_customers_path, class: "btn-cancel" %>
+        <%= f.submit "Create Customer", class: "btn-primary" %>
+      </div>
+
+    <% end %>
+  </div>
+</div>
+
+<style>
+.form-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 60px;
+}
+
+.form-card {
+  width: 600px;
+  background: #ffffff;
+  padding: 40px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.form-card h2 {
+  text-align: center;
+  margin-bottom: 30px;
+  font-weight: 600;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #3b82f6;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 30px;
+}
+
+.btn-cancel {
+  padding: 10px 20px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  text-decoration: none;
+  color: #333;
+  background: #f5f5f5;
+}
+
+.btn-primary {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  background: #2d3748;
+  color: #fff;
+  cursor: pointer;
+}
+
+.btn-primary:hover {
+  background: #1a202c;
+}
+
+.form-errors {
+  background: #ffe5e5;
+  color: #c53030;
+  padding: 10px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+}
+</style>

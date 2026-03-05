@@ -2,11 +2,11 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-lg-6 p-0">
+                 <% collection = Collection.find_by(name: "Women fashion") %>
                     <div class="categories__item categories__large__item set-bg"
-                    data-setbg="<%= asset_path('categories/category-1.jpg') %>">
+                    data-setbg="<%= url_for(collection.featured_image) if collection.featured_image.attached? %>">
                     <div class="categories__text">
-                        <h1>Women’s fashion</h1>
-                        <% collection = Collection.find_by(name: "Womens") %>
+                        <h1><%= collection.name%></h1>
                                <p><%= collection.description %></p>
                                <%= link_to "shop now", collection_path(collection.id) %>
                     </div>
@@ -15,20 +15,22 @@
             <div class="col-lg-6">
                 <div class="row">
                     <div class="col-lg-6 col-md-6 col-sm-6 p-0">
-                        <div class="categories__item set-bg" data-setbg="<%= asset_path('categories/category-2.jpg') %>">
+                    <% collection = Collection.find_by(name: "Men fashion") %>
+                        <div class="categories__item set-bg" data-setbg="<%= url_for(collection.featured_image) if collection.featured_image.attached? %>">
                             <div class="categories__text">
-                                <h4>Men’s fashion</h4>
-                                <% collection = Collection.find_by(name: "Mens") %>
+                               
+                                <h4><%= collection.name %></h4>
                                 <p><%= collection.products.count %> items</p>
                                <%= link_to "shop now", collection_path(collection.id) %>
                             </div>
                         </div>
                     </div>
                     <div class="col-lg-6 col-md-6 col-sm-6 p-0">
-                        <div class="categories__item set-bg" data-setbg="<%= asset_path('categories/category-3.jpg') %>">
+                     <% collection = Collection.find_by(name: "Kid fashion") %>
+                        <div class="categories__item set-bg" data-setbg="<%= url_for(collection.featured_image) if collection.featured_image.attached? %>">
                             <div class="categories__text">
-                                <h4>Kid’s fashion</h4>
-                                <% collection = Collection.find_by(name: "Kids") %>
+                                <h4><%= collection.name %></h4>
+                               
                                 <p><%= collection.products.count %> items</p>
                                <%= link_to "shop now", collection_path(collection.id) %>
                               
@@ -36,20 +38,26 @@
                         </div>
                     </div>
                     <div class="col-lg-6 col-md-6 col-sm-6 p-0">
-                        <div class="categories__item set-bg" data-setbg="<%= asset_path('categories/category-4.jpg') %>">
+                     <% collection = Collection.find_by(name: "Cosmetics") %>
+                        <div class="categories__item set-bg" data-setbg="<%= url_for(collection.featured_image) if collection.featured_image.attached? %>">
                             <div class="categories__text">
-                                <h4>Cosmetics</h4>
-                                <p>159 items</p>
-                                <a href="#">Shop now</a>
+                               <h4><%= collection.name %></h4>
+                               
+                                <p><%= collection.products.count %> items</p>
+                               <%= link_to "shop now", collection_path(collection.id) %>
+                              
                             </div>
                         </div>
                     </div>
                     <div class="col-lg-6 col-md-6 col-sm-6 p-0">
-                        <div class="categories__item set-bg" data-setbg="<%= asset_path('categories/category-5.jpg') %>">
+                     <% collection = Collection.find_by(name: "Accessories") %>
+                        <div class="categories__item set-bg" data-setbg="<%= url_for(collection.featured_image) if collection.featured_image.attached? %>">
                             <div class="categories__text">
-                                <h4>Accessories</h4>
-                                <p>792 items</p>
-                                <a href="#">Shop now</a>
+                               <h4><%= collection.name %></h4>
+                               
+                                <p><%= collection.products.count %> items</p>
+                               <%= link_to "shop now", collection_path(collection.id) %>
+                              
                             </div>
                         </div>
                     </div>
@@ -82,12 +90,17 @@
         </div>
        <div class="row property__gallery">
       <% @all_products.each do |product| %>
-        <% css_classes = ["mix" , "trend"] %>
-        <% product.collections.each do |c| %>
-          <% css_classes << c.name.downcase.singularize %>
-        <% end %>
+        <% css_classes = ["mix", "trend"] %>
+<% product.collections.each do |c| %>
+  <% name = c.name.downcase %>
+  <% css_classes << (name == "accessories" ? name : name.singularize) %>
+<% end %>
+
 
         <div class="col-lg-3 col-md-4 col-sm-6 <%= css_classes.join(" ") %>">
+
+       <%= link_to product_path(product), class: "product-link" do %>
+
           <div class="product__item">
             <div class="product__item__pic set-bg" data-setbg="<%= url_for(product.featured_image) if product.featured_image.attached? %>">
               <div class="label new">New</div>
@@ -122,13 +135,12 @@
               <h6><%= link_to product.name, product_path(product) %>
 </h6>
               <div class="rating">
-                <% 5.times do %>
-                  <i class="fa fa-star"></i>
-                <% end %>
+               
               </div>
              
             </div>
           </div>
+          <% end %>
         </div>
       <% end %>
     </div>
@@ -279,57 +291,3 @@
     </div>
 </section>
 
-<script>
-document.addEventListener("turbolinks:load", () => {
-
-  // Add to Cart
-  document.querySelectorAll(".add-to-cart-btn").forEach(btn => {
-    btn.addEventListener("click", e => {
-      e.preventDefault();
-      const variantId = btn.dataset.variantId;
-      
-      fetch("/line_items", {
-        method: "POST",
-        headers: {
-          "X-CSRF-Token": document.querySelector("meta[name=csrf-token]").content,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ quantity: 1, product_variant_combination_id: variantId })
-      })
-      .then(res => res.json())
-      .then(data => {
-        if (data.success) {
-          alert("Added to cart 🛒");
-          document.getElementById("cart-count").innerText = data.cart_count;
-        }
-      });
-    });
-  });
-
-
-  // Add to Wishlist
-  document.querySelectorAll(".wishlist-btn").forEach(btn => {
-    btn.addEventListener("click", e => {
-      e.preventDefault();
-      const productId = btn.dataset.productId;
-
-      fetch("/wishlist_items", {
-        method: "POST",
-        headers: {
-          "X-CSRF-Token": document.querySelector("meta[name=csrf-token]").content,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ product_id: productId })
-      })
-      .then(res => res.json())
-      .then(data => {
-        if (data.success) {
-          alert("Added to wishlist ❤️");
-        }
-      });
-    });
-  });
-
-});
-
-</script>

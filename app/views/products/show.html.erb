@@ -103,18 +103,14 @@
 
               <%= f.submit "Add to cart", class: "cart-btn" %>
 <% end %>
-              <ul>
+             <ul>
   <li>
-    <%= link_to wishlist_items_path(product_id: @product.id),
-              method: :post,
-              remote: true,
-              class: "wishlist-btn",
-              form: { data: { turbo: false } } do %>
-  <span class="icon_heart_alt"></span>
-<% end %>
-
+    <a class="wishlist-btn <%= 'active' if @wishlist_product_ids.include?(@product.id) %>"
+       data-product-id="<%= @product.id %>"
+       style="cursor:pointer">
+      <span class="icon_heart_alt"></span>
+    </a>
   </li>
-  <li><a href="#"><span class="icon_adjust-horiz"></span></a></li>
 </ul>
             
           </div>
@@ -241,9 +237,7 @@
                              <h6><%= link_to product.name, product_path(product) %>
 </h6>
                             <div class="rating">
-                <% 5.times do %>
-                  <i class="fa fa-star"></i>
-                <% end %>
+              
               </div>
                             <% combo = product.product_variant_combinations.first %>
 
@@ -262,113 +256,94 @@
             </div>
   </div>
 </section>
+<script>
+  window.wishlistProductIds = <%= raw(@wishlist_product_ids.to_json) %>;
+</script>
 
 <script>
 
-  window.variantCombinations = <%= raw @variant_combinations.to_json(
-    only: [:id, :price, :compared_price],
-    include: {
-      product_variants: {
-        only: [:id],
-        methods: [:variant_type]
-      }
+   window.variantCombinations = <%= raw @variant_combinations.map { |pvc|
+    {
+      id:             pvc.id,
+      price:          pvc.price,
+      compared_price: pvc.compared_price,
+      image_url:      pvc.image.attached? ? url_for(pvc.image) : nil,
+      product_variant_ids: pvc.product_variant_ids
     }
-  ) %>;
+  }.to_json %>;
   </script>
 
   <script>
-
-
+  document.addEventListener("turbolinks:load", function () {
 
   const selectedOptions = {};
 
   document.querySelectorAll(".variant-option").forEach(input => {
+
+    if (input.checked) {
+      selectedOptions[input.dataset.type] = parseInt(input.value);
+    }
+
     input.addEventListener("change", () => {
       selectedOptions[input.dataset.type] = parseInt(input.value);
       updateVariant();
     });
+
   });
 
   function updateVariant() {
+
     const optionIds = Object.values(selectedOptions);
+    if (optionIds.length === 0) return;
 
-    // Require all options (Color + Size)
-    if (optionIds.length < 2) return;
-
-    const match = window.variantCombinations.find(combination => {
-      const comboOptionIds = combination.product_variants.map(o => o.id);
-      return optionIds.every(id => comboOptionIds.includes(id));
+    const match = window.variantCombinations.find(combo => {
+      return optionIds.every(id => combo.product_variant_ids.includes(id));
     });
 
     if (!match) return;
 
-    // Update price
-    document.getElementById("product-price").innerText = match.price;
+    document.getElementById("product-price").innerText =
+      parseFloat(match.price).toFixed(2);
 
     const compared = document.getElementById("compared-price");
-    
-      compared.innerText = `$ ${match.compared_price}`;
+
+    if (match.compared_price &&
+        parseFloat(match.compared_price) > parseFloat(match.price)) {
+
+      compared.innerText = `$ ${parseFloat(match.compared_price).toFixed(2)}`;
       compared.style.display = "inline";
-   
-    // Update hidden variant ID
+
+    } else {
+
+      compared.innerText = "";
+      compared.style.display = "none";
+
+    }
+
     document.getElementById("selected-variant-id").value = match.id;
+
+    if (match.image_url) {
+      document.querySelectorAll("#main-product-image").forEach(img => {
+        img.src = match.image_url;
+      });
+    }
+
   }
 
-
-
-</script>
-
-<script>
-document.addEventListener("turbolinks:load", () => {
-
-  // Add to Cart
-  document.querySelectorAll(".add-to-cart-btn").forEach(btn => {
-    btn.addEventListener("click", e => {
-      e.preventDefault();
-      const variantId = btn.dataset.variantId;
-      
-      fetch("/line_items", {
-        method: "POST",
-        headers: {
-          "X-CSRF-Token": document.querySelector("meta[name=csrf-token]").content,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ quantity: 1, product_variant_combination_id: variantId })
-      })
-      .then(res => res.json())
-      .then(data => {
-        if (data.success) {
-          alert("Added to cart 🛒");
-          document.getElementById("cart-count").innerText = data.cart_count;
-        }
-      });
-    });
-  });
-
-
-  // Add to Wishlist
-  document.querySelectorAll(".wishlist-btn").forEach(btn => {
-    btn.addEventListener("click", e => {
-      e.preventDefault();
-      const productId = btn.dataset.productId;
-
-      fetch("/wishlist_items", {
-        method: "POST",
-        headers: {
-          "X-CSRF-Token": document.querySelector("meta[name=csrf-token]").content,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ product_id: productId })
-      })
-      .then(res => res.json())
-      .then(data => {
-        if (data.success) {
-          alert("Added to wishlist ❤️");
-        }
-      });
-    });
-  });
+  updateVariant();
 
 });
-
 </script>
+<style>
+
+
+.wishlist-btn .icon_heart_alt {
+  color: #999;
+  transition: color 0.2s;
+}
+
+.wishlist-btn.active .icon_heart_alt,
+.wishlist-btn:hover .icon_heart_alt {
+  color: red;
+}
+</style>

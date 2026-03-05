@@ -2,32 +2,38 @@ class WishlistItemsController < ApplicationController
   before_action :authenticate_user!
 
   def create
-    # Make sure the user has a wishlist
     wishlist = current_user.wishlist || current_user.create_wishlist
+    product  = Product.find_by(id: params[:product_id])
 
-    # Ensure the product exists
-    product = Product.find_by(id: params[:product_id])
     unless product
-      redirect_back fallback_location: root_path, alert: "Product not found"
-      return
+      render json: { success: false, error: "Product not found" }, status: :not_found and return
     end
 
-    # Add product if not already in wishlist
-    item = wishlist.wishlist_items.find_or_initialize_by(product: product)
+    existing = wishlist.wishlist_items.find_by(product: product)
 
-    if item.persisted?
-      redirect_to wishlists_path, alert: "Product already in wishlist"
-    elsif item.save
-      redirect_to wishlists_path, notice: "Added to wishlist"
+    if existing
+      # Toggle OFF — remove from wishlist
+      existing.destroy
+      render json: {
+        success: true,
+        action: "removed",
+        wishlist_count: wishlist.wishlist_items.count
+      }
     else
-      redirect_to wishlists_path, alert: "Could not add product to wishlist"
+      # Toggle ON — add to wishlist
+      item = wishlist.wishlist_items.create!(product: product)
+      render json: {
+        success: true,
+        action: "added",
+        wishlist_count: wishlist.wishlist_items.count
+      }
     end
   end
 
   def destroy
     wishlist = current_user.wishlist
-    item = wishlist.wishlist_items.find(params[:id])
+    item     = wishlist.wishlist_items.find(params[:id])
     item.destroy
-    redirect_to wishlists_path, notice: "Removed from wishlist"
+    render json: { success: true, wishlist_count: wishlist.wishlist_items.count }
   end
 end

@@ -2,26 +2,33 @@
   <h1 class="dashboard-title">Admin Dashboard</h1>
 
   <div class="stats-grid">
-    <div class="stat-card">
-      <div class="stat-label">Total Customers</div>
-      <div class="stat-value"><%= @total_customers %></div>
-    </div>
-
+  <%= link_to admins_customers_path do %>
+  <div class="stat-card">
+    <div class="stat-label">Total Customers</div>
+    <div class="stat-value"><%= @total_customers %></div>
+  </div>
+<% end %>
+ <%= link_to admins_products_path do %>
     <div class="stat-card">
       <div class="stat-label">Total Products</div>
       <div class="stat-value"><%= @total_products %></div>
     </div>
+    <% end %>
 
+ <%= link_to admins_products_path do %>
     <div class="stat-card warning">
       <div class="stat-label">Out of Stock</div>
       <div class="stat-value"><%= @out_of_stock_products %></div>
     </div>
+    <% end %>
 
+ <%= link_to admins_orders_path do %>
     <div class="stat-card success">
       <div class="stat-label">Active Orders</div>
       <div class="stat-value"><%= @active_orders %></div>
     </div>
   </div>
+  <% end %>
 
   <div class="dashboard-sections">
     <div class="dashboard-box">

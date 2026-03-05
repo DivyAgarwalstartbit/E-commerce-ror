@@ -17,7 +17,7 @@ class Admins::CollectionsController < Admins::ApplicationController
   def create
     @collection = Collection.new(collection_params)
     if @collection.save
-      redirect_to admin_collection_path(@collection), notice: "Collection created successfully"
+      redirect_to admins_collections_path, notice: "Collection created successfully"
     else
       render :new
     end
@@ -28,7 +28,7 @@ class Admins::CollectionsController < Admins::ApplicationController
 
   def update
     if @collection.update(collection_params)
-      redirect_to admin_collection_path(@collection), notice: "Collection updated successfully"
+      redirect_to admins_collections_path, notice: "Collection updated successfully"
     else
       render :edit
     end
@@ -36,7 +36,7 @@ class Admins::CollectionsController < Admins::ApplicationController
 
   def destroy
     @collection.destroy
-    redirect_to admin_collections_path, notice: "Collection deleted successfully"
+    redirect_to admins_collections_path, notice: "Collection deleted successfully"
   end
 
   private
@@ -46,6 +46,6 @@ class Admins::CollectionsController < Admins::ApplicationController
   end
 
   def collection_params
-    params.require(:collection).permit(:name, :description)
+    params.require(:collection).permit(:name, :description , :featured_image)
   end
 end

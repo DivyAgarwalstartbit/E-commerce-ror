@@ -1,6 +1,7 @@
 <div class="admin-page">
   <div class="admin-header">
     <h2>All Orders</h2>
+     <%= link_to "New order", new_admins_order_path, class: "btn-new-collection" %>
   </div>
 
   <table class="admin-table">
@@ -43,6 +44,8 @@
 
           <td>
             <%= link_to "View", admins_order_path(order), class: "btn-view" %>
+         <%= link_to "Delete", admins_order_path(order), method: :delete, class: "btn-view", data: { confirm: "Are you sure you want to delete this order?" } %>
+
           </td>
         </tr>
       <% end %>
@@ -52,6 +55,21 @@
 
 
 <style>
+.btn-new-collection {
+  background: #28a745;
+  color: white;
+  padding: 8px 18px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 14px;
+  box-shadow: 0 2px 6px rgba(40,167,69,0.4);
+  transition: background-color 0.3s ease;
+}
+
+.btn-new-collection:hover {
+  background: #218838;
+}
 .admin-page {
   padding: 30px;
   background: #f7f7f7;

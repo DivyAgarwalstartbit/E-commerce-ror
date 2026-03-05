@@ -1,6 +1,6 @@
 module Admins
     class ProductsController < Admins::ApplicationController
-        before_action :set_product, only: [:edit, :update, :show, :inventory]
+        before_action :set_product, only: [:edit, :update, :show, :inventory , :destroy]
 
         def index 
           @products = Product.includes(:category).all
@@ -18,6 +18,7 @@ module Admins
              prices = params[:product][:combination_prices]
              stocks = params[:product][:combination_stock]
             compared  = params[:product][:combination_compared_prices]
+            images = params[:product][:combination_images] || []
 
             groups = @product.variant_groups.values
             combinations = groups.shift.product(*groups)
@@ -29,6 +30,9 @@ module Admins
        stock_qunatity: stocks[index]
       )
       pvc.product_variants << variants
+      if images[index].present?
+  pvc.image.attach(images[index])
+end
     end
             redirect_to admins_products_path, notice: "Product created!"
         else
@@ -36,48 +40,78 @@ module Admins
         end
         end
         
-        def edit 
-          @product = Product.find_by!(slug: params[:id])
-        end 
-  
+       def edit
+  @product = Product.find_by!(slug: params[:id])
+
+  groups = @product.variant_groups.values
+  return if groups.empty?
+
+  combinations = groups.shift.product(*groups)
+
+  @existing_combinations = combinations.map do |variants|
+    variant_array = Array(variants)
+
+    pvc = @product.product_variant_combinations.includes(:product_variants).find do |c|
+      c.product_variant_ids.sort == variant_array.map(&:id).sort
+    end
+
+    {
+      variants:      variant_array.map(&:value),
+      price:         pvc&.price,
+      compared_price: pvc&.compared_price,
+      stock:         pvc&.stock_qunatity,
+      image_url:     pvc&.image&.attached? ? url_for(pvc.image) : nil
+    }
+  end
+end
         def update
-  # Find the product
   @product = Product.find_by!(slug: params[:id])
 
   if @product.update(product_params)
-    if params[:product][:featured_image].present?
-      @product.featured_image.attach(params[:product][:featured_image])
-    end
-    # Handle combination prices / stock / compared prices if sent
-    prices  = params[:product][:combination_prices] || []
-    compare = params[:product][:combination_compared_prices] || []
-    stocks  = params[:product][:combination_stock] || []
+    prices   = params[:product][:combination_prices] || []
+    compare  = params[:product][:combination_compared_prices] || []
+    stocks   = params[:product][:combination_stock] || []
+    images   = params[:product][:combination_images] || []
 
-    # Generate combinations (similar to create)
-    groups = @product.variant_groups.values
+    groups       = @product.variant_groups.values
     combinations = groups.shift.product(*groups)
 
     combinations.each_with_index do |variants, index|
-      # Find existing combination or create new
-      pvc = @product.product_variant_combinations.find_or_initialize_by(
-        product_variants: variants
-      )
+      variant_array = Array(variants)
+
+      # Find existing PVC by matching variant IDs instead of building new ones
+      pvc = @product.product_variant_combinations.find do |c|
+        c.product_variant_ids.sort == variant_array.map(&:id).sort
+      end
+
+      next unless pvc  # skip if no match found
 
       pvc.price          = prices[index]
       pvc.compared_price = compare[index]
-      pvc.stock_quantity = stocks[index]
+      pvc.stock_qunatity = stocks[index]
       pvc.save!
+
+      if images[index].present?
+        pvc.image.purge if pvc.image.attached?
+        pvc.image.attach(images[index])
+      end
     end
 
-    redirect_to admins_product_path(@product), notice: "Product updated!"
+    redirect_to admins_products_path, notice: "Product updated!"
   else
-    # If update fails, re-render form with errors
     render :edit
   end
 end
 
         def destroy
-        end 
+
+          if @product.destroy
+            redirect_to admins_products_path, notice: "Product Deleted"
+          else
+            redirect_to admins_products_path, alert: "Product could not be deleted"
+          end
+        end
+ 
 
         private
 

@@ -54,8 +54,9 @@
         </td>
 
         <td class="cart__quantity">
+         
           <input type="number" class="quantity-input" min="1" value="<%= item.quantity %>" data-line-item-id="<%= item.id %>">
-
+       
         </td>
 
         <td class="cart__total" data-cart-target="lineTotal">
@@ -123,44 +124,12 @@
 
 <script>
 document.addEventListener("turbolinks:load", () => {
-  // Handle quantity changes
-  document.querySelectorAll(".quantity-input").forEach(input => {
-    input.addEventListener("change", updateQuantity)
-  });
-
   // Handle remove buttons
   document.querySelectorAll(".remove-cart-btn").forEach(btn => {
     btn.addEventListener("click", removeItem)
   });
 
-  function updateQuantity(event) {
-    const input = event.target;
-    const tr = input.closest("tr");
-    const lineItemId = tr.dataset.lineItemId;
-    const quantity = parseInt(input.value);
-    
-    fetch(`/line_items/${lineItemId}`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-        "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]').content
-      },
-      body: JSON.stringify({ line_item: { quantity: quantity } })
-    })
-    .then(res => res.json())
-    .then(data => {
-      if (data.success) {
-        // Update row total
-        tr.querySelector("[data-cart-target='lineTotal']").innerText = data.line_item_total;
-        console.log(quantity);
-        // Update cart totals
-        document.getElementById("cart-subtotal").innerText = data.cart_subtotal;
-        document.getElementById("cart-total").innerText = data.cart_total;
-      }
-    })
-    .catch(err => console.error("Error updating quantity:", err));
-  }
-
+  
   function removeItem(event) {
     const btn = event.target;
     const tr = btn.closest("tr");
