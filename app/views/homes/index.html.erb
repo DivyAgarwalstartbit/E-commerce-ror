@@ -99,9 +99,9 @@
 
         <div class="col-lg-3 col-md-4 col-sm-6 <%= css_classes.join(" ") %>">
 
-       <%= link_to product_path(product), class: "product-link" do %>
+      
 
-          <div class="product__item">
+          <div class="product__item " data-url="<%= product_path(product) %>">
             <div class="product__item__pic set-bg" data-setbg="<%= url_for(product.featured_image) if product.featured_image.attached? %>">
               <div class="label new">New</div>
               <ul class="product__hover">
@@ -140,7 +140,7 @@
              
             </div>
           </div>
-          <% end %>
+        
         </div>
       <% end %>
     </div>

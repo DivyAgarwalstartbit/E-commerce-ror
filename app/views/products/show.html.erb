@@ -63,13 +63,7 @@
         <div class="product__details__text">
           <h3><%= @product.name %> <span>Brand: <%= @product.brand %></span></h3>
 
-          <div class="rating">
-            <% 5.times do %>
-              <i class="fa fa-star"></i>
-            <% end %>
-            <span>( 138 reviews )</span>
-          </div>
-
+         
           <% default_combination = @variant_combinations.first %>
 
          <div class="product__details__price">
