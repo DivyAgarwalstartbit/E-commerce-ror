@@ -34,6 +34,6 @@ class WishlistItemsController < ApplicationController
     wishlist = current_user.wishlist
     item     = wishlist.wishlist_items.find(params[:id])
     item.destroy
-    render json: { success: true, wishlist_count: wishlist.wishlist_items.count }
+    redirect_to wishlists_path, notice: "Item removed from wishlist."
   end
 end
