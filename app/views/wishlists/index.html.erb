@@ -31,8 +31,8 @@
     <% @items.each do |item| %>
       <% product = item.product %>
       <tr>
-        <td class="cart__product__item">
-          <div class="cart__product__item__image">
+        <td class="cart__product__item" data-url="<%= product_path(product) %>">
+          <div class="cart__product__item__image" >
             <% if product&.featured_image.attached? %>
               <%= image_tag(
       product.featured_image.variant(resize_to_limit: [400, 400]).processed,

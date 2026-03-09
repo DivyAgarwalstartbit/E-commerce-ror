@@ -257,7 +257,7 @@
 
 
 <script>
-document.addEventListener("turbolinks:load", () => {
+
 
   // ── Quantity update ──────────────────────────────────────
   document.querySelectorAll(".quantity-input").forEach(input => {
@@ -308,51 +308,62 @@ document.addEventListener("turbolinks:load", () => {
 
   // ── Wishlist toggle ───────────────────────────────────────
   // Mark already-wishlisted on page load
-  (window.wishlistProductIds || []).forEach(id => {
-    document.querySelectorAll(`.wishlist-btn[data-product-id="${id}"]`).forEach(btn => {
-      btn.classList.add("active");
-    });
+ document.querySelectorAll(".wishlist-btn").forEach(btn => {
+  // Restore state from server data on page load
+  const productId = btn.dataset.productId;
+  if ((window.wishlistProductIds || []).includes(parseInt(productId))) {
+    btn.classList.add("active");
+  }
+
+  btn.addEventListener("click", function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const button = this;
+    button.disabled = true; // Prevent double-clicks
+
+    fetch("/wishlist_items", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]').content
+      },
+      body: JSON.stringify({ product_id: button.dataset.productId })
+    })
+    .then(r => {
+      if (r.status === 401) { window.location = "/login"; return null; }
+      return r.json();
+    })
+    .then(data => {
+      if (!data?.success) return;
+
+      const countEl = document.getElementById("wishlist-count");
+      if (countEl) countEl.innerText = data.wishlist_count;
+
+      if (data.action === "added") {
+        button.classList.add("active");
+        // Keep local list in sync
+        window.wishlistProductIds = [...(window.wishlistProductIds || []), parseInt(button.dataset.productId)];
+        showToast("❤️ Added to wishlist", "success");
+      } else {
+        button.classList.remove("active");
+        window.wishlistProductIds = (window.wishlistProductIds || []).filter(id => id !== parseInt(button.dataset.productId));
+        showToast("Removed from wishlist", "info");
+      }
+    })
+    .catch(err => console.error("Wishlist Error:", err))
+    .finally(() => { button.disabled = false; });
   });
-
-  document.querySelectorAll(".wishlist-btn").forEach(btn => {
-    btn.addEventListener("click", function (e) {
-      e.preventDefault();
-      e.stopPropagation();
-
-      const button = this;
-
-      fetch("/wishlist_items", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]').content
-        },
-        body: JSON.stringify({ product_id: this.dataset.productId })
-      })
-      .then(r => {
-        if (r.status === 401) { window.location = "/login"; return null; }
-        return r.json();
-      })
-      .then(data => {
-        if (!data?.success) return;
-
-        const countEl = document.getElementById("wishlist-count");
-        if (countEl) countEl.innerText = data.wishlist_count;
-
-        if (data.action === "added") {
-          button.classList.add("active");
-          showToast("❤️ Added to wishlist", "success");
-        } else {
-          button.classList.remove("active");
-          showToast("Removed from wishlist", "info");
-        }
-      })
-      .catch(err => console.error("Wishlist Error:", err));
-    });
-  });
-
+});
   // ── Product card click navigation ────────────────────────
-  document.querySelectorAll(".product__item").forEach(item => {
+  document.querySelectorAll(".cart__product__item").forEach(item => {
+    item.addEventListener("click", function (e) {
+      if (e.target.closest("a")) return;
+      window.location = this.dataset.url;
+    });
+  });
+
+   document.querySelectorAll(".product__item").forEach(item => {
     item.addEventListener("click", function (e) {
       if (e.target.closest("a")) return;
       window.location = this.dataset.url;
@@ -360,15 +371,14 @@ document.addEventListener("turbolinks:load", () => {
   });
 
   // ── Flash auto-dismiss ────────────────────────────────────
-  document.querySelectorAll(".flash-message").forEach(msg => {
-    setTimeout(() => msg.classList.add("show"), 100);
-    setTimeout(() => {
-      msg.classList.remove("show");
-      setTimeout(() => msg.remove(), 500);
-    }, 5000);
-  });
+  // document.querySelectorAll(".flash-message").forEach(msg => {
+  //   setTimeout(() => msg.classList.add("show"), 100);
+  //   setTimeout(() => {
+  //     msg.classList.remove("show");
+  //     setTimeout(() => msg.remove(), 500);
+  //   }, 5000);
+  // });
 
-});
 
 // ── Toast helper ──────────────────────────────────────────
 function showToast(message, type = "success") {
