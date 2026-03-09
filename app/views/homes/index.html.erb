@@ -4,7 +4,9 @@
                 <div class="col-lg-6 p-0">
                  <% collection = Collection.find_by(name: "Women fashion") %>
                     <div class="categories__item categories__large__item set-bg lazy-bg"
-                    data-setbg="<%= url_for(collection.featured_image(resize_to_limit: [400, 400])) if collection.featured_image.attached? %>">
+                   data-setbg="<%= rails_representation_url(
+  collection.featured_image.variant(resize_to_limit: [500,500]).processed
+) if collection.featured_image.attached? %>">
                     <div class="categories__text">
                         <h1><%= collection.name%></h1>
                                <p><%= collection.description %></p>
@@ -16,7 +18,9 @@
                 <div class="row">
                     <div class="col-lg-6 col-md-6 col-sm-6 p-0">
                     <% collection = Collection.find_by(name: "Men fashion") %>
-                        <div class="categories__item set-bg lazy-bg" data-setbg="<%= url_for(collection.featured_image(resize_to_limit: [400, 400])) if collection.featured_image.attached? %>">
+                        <div class="categories__item set-bg lazy-bg" data-setbg="<%= rails_representation_url(
+  collection.featured_image.variant(resize_to_limit: [500,500]).processed
+) if collection.featured_image.attached? %>">
                             <div class="categories__text">
                                
                                 <h4><%= collection.name %></h4>
@@ -27,7 +31,9 @@
                     </div>
                     <div class="col-lg-6 col-md-6 col-sm-6 p-0">
                      <% collection = Collection.find_by(name: "Kid fashion") %>
-                        <div class="categories__item set-bg lazy-bg" data-setbg="<%= url_for(collection.featured_image(resize_to_limit: [400, 400])) if collection.featured_image.attached? %>">
+                        <div class="categories__item set-bg lazy-bg" data-setbg="<%= rails_representation_url(
+  collection.featured_image.variant(resize_to_limit: [500,500]).processed
+) if collection.featured_image.attached? %>">
                             <div class="categories__text">
                                 <h4><%= collection.name %></h4>
                                
@@ -39,7 +45,9 @@
                     </div>
                     <div class="col-lg-6 col-md-6 col-sm-6 p-0">
                      <% collection = Collection.find_by(name: "Cosmetics") %>
-                        <div class="categories__item set-bg lazy-bg" data-setbg="<%= url_for(collection.featured_image(resize_to_limit: [400, 400])) if collection.featured_image.attached? %>">
+                        <div class="categories__item set-bg lazy-bg" data-setbg="<%= rails_representation_url(
+  collection.featured_image.variant(resize_to_limit: [500,500]).processed
+) if collection.featured_image.attached? %>">
                             <div class="categories__text">
                                <h4><%= collection.name %></h4>
                                
@@ -51,7 +59,9 @@
                     </div>
                     <div class="col-lg-6 col-md-6 col-sm-6 p-0">
                      <% collection = Collection.find_by(name: "Accessories") %>
-                        <div class="categories__item set-bg lazy-bg" data-setbg="<%= url_for(collection.featured_image(resize_to_limit: [400, 400])) if collection.featured_image.attached? %>">
+                        <div class="categories__item set-bg lazy-bg" data-setbg="<%= rails_representation_url(
+  collection.featured_image.variant(resize_to_limit: [500,500]).processed
+) if collection.featured_image.attached? %>">
                             <div class="categories__text">
                                <h4><%= collection.name %></h4>
                                
