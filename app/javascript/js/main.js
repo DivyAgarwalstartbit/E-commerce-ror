@@ -31,9 +31,20 @@ window.jQuery = $;
     /*------------------
         Background Set
     --------------------*/
-    $('.set-bg').each(function () {
-      const bg = $(this).data('setbg');
-      $(this).css('background-image', `url(${bg})`);
+    $(document).ready(function () {
+      const observer = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const el = entry.target;
+            $(el).css('background-image', `url(${el.dataset.setbg})`);
+            observer.unobserve(el);
+          }
+        });
+      });
+
+      $('.set-bg').each(function () {
+        observer.observe(this);
+      });
     });
 
     /*------------------

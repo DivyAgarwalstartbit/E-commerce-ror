@@ -152,7 +152,7 @@
      
         <div class="product__item"  data-url="<%= product_path(product) %>">
 
-          <div class="product__item__pic set-bg"
+          <div class="product__item__pic set-bg lazy-bg"
                data-setbg="<%= url_for(product.featured_image) if product.featured_image&.attached? %>"  >
 
             <% if variant&.compared_price.present? && variant.compared_price > variant.price %>
@@ -181,12 +181,9 @@
     <a  class="add-to-cart-btn" data-variant-id="<%= product.default_variant_combination.id %>">
       <span class="icon_bag_alt"></span>
     </a>
-  </li>
-               
-             
+  </li>   
             </ul>
           </div>
-
           <div class="product__item__text">
             <h6><%= link_to product.name, product_path(product) %></h6>
 

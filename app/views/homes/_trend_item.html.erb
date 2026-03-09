@@ -1,7 +1,13 @@
 <div class="trend__item">
   <div class="trend__item__pic">
     <% if product.featured_image.attached? %>
-      <%= image_tag product.featured_image, alt: product.name, height: "100", width: "100" %>
+     <%= image_tag(
+      product.featured_image.variant(resize_to_limit: [400, 400]).processed,
+      alt: product.name,
+      loading: "lazy",
+      height: 100,
+      width: 100,
+) if product.featured_image.attached? %>
     <% else %>
       <img src="img/default-product.jpg" height="100" width="100" alt="<%= product.name %>">
     <% end %>

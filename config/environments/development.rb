@@ -32,7 +32,7 @@ config.hosts << "selectively-spikiest-alfredo.ngrok-free.dev"
   # Do not eager load code on boot.
   config.eager_load = false
   config.active_storage.service = :cloudinary
-
+config.active_storage.variant_processor = :vips
 
 
   # Show full error reports.
